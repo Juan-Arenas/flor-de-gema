@@ -20,7 +20,7 @@
   <link rel="icon" type="image/webp" href="logo.webp">
   <link rel="apple-touch-icon" href="logo.webp">
 
-  <!-- Crisp Sans-Serif Font (Inter) matching Reference -->
+  <!-- Crisp Sans-Serif Font (Inter) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -33,13 +33,14 @@
   <!-- Top Announcement Strip for Live Streams -->
   <div class="top-live-strip">
     <span>
-      🔴 <strong>Transmisiones en vivo:</strong> Nuevos lotes en TikTok 
+      <span class="live-dot-pulse"></span>
+      <strong>Transmisiones en vivo:</strong> Nuevos lotes en TikTok 
       <a href="https://tiktok.com/@flor.de.gema" target="_blank" rel="noopener">@flor.de.gema</a> e Instagram 
       <a href="https://instagram.com/flordegema.s" target="_blank" rel="noopener">@flordegema.s</a>
     </span>
   </div>
 
-  <!-- Header (Exact match to Reference 1) -->
+  <!-- Header -->
   <header class="site-header">
     <div class="header-main-row container">
       <!-- Diamond Icon & Brand Title -->
@@ -70,17 +71,15 @@
           <span class="wishlist-pill-count" id="wishlist-counter" style="display: none;">0</span>
         </button>
 
-        <button class="header-icon-btn" id="mobile-menu-toggle" aria-label="Abrir Menú">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="3" y1="12" x2="21" y2="12"></line>
-            <line x1="3" y1="6" x2="21" y2="6"></line>
-            <line x1="3" y1="18" x2="21" y2="18"></line>
+        <a href="https://wa.me/573016256746" target="_blank" rel="noopener" class="header-icon-btn" title="WhatsApp Oficial" style="color: #25d366;">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.007c.107.005.249-.041.39.296.144.347.491 1.2.534 1.288.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86.174.086.275.072.376-.044.102-.115.433-.506.549-.68.116-.173.231-.144.39-.086s1.011.477 1.184.564c.173.086.289.13.332.202.043.072.043.419-.101.824z"/>
           </svg>
-        </button>
+        </a>
       </div>
     </div>
 
-    <!-- Submenu Bar (Exact: Inicio · Gemas · Colecciones · Guía gemológica · Nosotros · Contacto) -->
+    <!-- Submenu Bar (Inicio · Gemas · Colecciones · Guía gemológica · Nosotros · Contacto) -->
     <div class="container">
       <div class="header-submenu-row">
         <a href="#inicio" class="submenu-item active">Inicio</a>
@@ -99,11 +98,11 @@
   </header>
 
   <!-- =======================================================================
-       1. SECCIÓN INICIO & HERO (Exact match to Reference 1 & 2)
+       1. SECCIÓN INICIO & HERO
        ======================================================================= -->
   <main>
     <section class="hero-wrapper container" id="inicio">
-      <!-- Gemstone Photograph on Slate (Matching User Reference) -->
+      <!-- Gemstone Photograph on Slate -->
       <div class="hero-image-card">
         <img src="assets/images/hero-gemstones.jpg" alt="Piedras preciosas y semipreciosas Flor De Gema">
         <button class="hero-bookmark-btn" title="Guardar colección">
@@ -132,7 +131,7 @@
     </section>
 
     <!-- =====================================================================
-         2. EXPLORA POR TIPO DE GEMA (Exact match to Reference 2)
+         2. EXPLORA POR TIPO DE GEMA
          ===================================================================== -->
     <section class="section-explore-gems container" id="explora-tipo">
       <h2 class="section-title-plain">Explora por tipo de gema</h2>
@@ -193,7 +192,7 @@
     </section>
 
     <!-- =====================================================================
-         FLYER 1: PRESENTACIÓN Y ESENCIA DE LA MARCA
+         FLYER 1: PRESENTACIÓN Y ESENCIA DE LA MARCA (ADAPTADO)
          ===================================================================== -->
     <div class="flyer-slot-container container">
       <a href="https://wa.me/573016256746?text=Hola%20Flor%20De%20Gema,%20vi%20su%20presentaci%C3%B3n%20de%20gemas%20y%20cristales%20y%20deseo%20m%C3%A1s%20informaci%C3%B3n" target="_blank" rel="noopener" class="flyer-banner-wide" title="Flor De Gema - Gemas, Cristales y Detalles que Enamoran">
@@ -202,112 +201,9 @@
     </div>
 
     <!-- =====================================================================
-         3. LAS SECCIONES QUE DEBE TENER (Exact match to Reference 3 & 4)
-         ===================================================================== -->
-    <section class="section-features-list container">
-      <h2 class="section-title-plain" style="margin-bottom: 2rem;">Las secciones que debe tener</h2>
-
-      <div class="features-list-container">
-        <!-- 1. Inicio -->
-        <div class="feature-item-row">
-          <div class="feature-item-icon-box">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-              <polyline points="9 22 9 12 15 12 15 22"></polyline>
-            </svg>
-          </div>
-          <div class="feature-item-content">
-            <h3 class="feature-item-title">1. Inicio</h3>
-            <p class="feature-item-desc">
-              Una fotografía impactante, el mensaje principal de la marca, las colecciones destacadas y accesos directos para comprar o consultar por WhatsApp.
-            </p>
-          </div>
-        </div>
-
-        <!-- 2. Catálogo de gemas -->
-        <div class="feature-item-row">
-          <div class="feature-item-icon-box">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M6 3h12l4 6-10 12L2 9l4-6z"></path>
-            </svg>
-          </div>
-          <div class="feature-item-content">
-            <h3 class="feature-item-title">2. Catálogo de gemas</h3>
-            <p class="feature-item-desc">
-              Zafiros, esmeraldas, rubíes, turmalinas, topacios, amatistas y otras gemas disponibles. Cada piedra debe tener su propia página de producto.
-            </p>
-          </div>
-        </div>
-
-        <!-- 3. Fichas técnicas y reportes -->
-        <div class="feature-item-row">
-          <div class="feature-item-icon-box">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-              <polyline points="14 2 14 8 20 8"></polyline>
-              <line x1="16" y1="13" x2="8" y2="13"></line>
-              <line x1="16" y1="17" x2="8" y2="17"></line>
-              <polyline points="10 9 9 9 8 9"></polyline>
-            </svg>
-          </div>
-          <div class="feature-item-content">
-            <h3 class="feature-item-title">3. Fichas técnicas y reportes</h3>
-            <p class="feature-item-desc">
-              Peso en quilates, medidas en milímetros, forma, talla, color, tratamientos conocidos, origen cuando esté documentado y reporte gemológico cuando exista.
-            </p>
-          </div>
-        </div>
-
-        <!-- 4. Academia gemológica -->
-        <div class="feature-item-row">
-          <div class="feature-item-icon-box">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-            </svg>
-          </div>
-          <div class="feature-item-content">
-            <h3 class="feature-item-title">4. Academia gemológica</h3>
-            <p class="feature-item-desc">
-              Artículos para aprender a diferenciar gemas, entender sus tratamientos, conocer sus procedencias y comprender los reportes de laboratorio. Esta sección también puede atraer visitas desde Google.
-            </p>
-          </div>
-        </div>
-
-        <!-- 5. Gemas exclusivas y preventas -->
-        <div class="feature-item-row">
-          <div class="feature-item-icon-box">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-            </svg>
-          </div>
-          <div class="feature-item-content">
-            <h3 class="feature-item-title">5. Gemas exclusivas y preventas</h3>
-            <p class="feature-item-desc">
-              Colecciones limitadas, nuevos lotes, piezas de colección y lanzamientos relacionados con tus transmisiones en vivo.
-            </p>
-          </div>
-        </div>
-
-        <!-- 6. Nuestra historia y contacto -->
-        <div class="feature-item-row">
-          <div class="feature-item-icon-box">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-            </svg>
-          </div>
-          <div class="feature-item-content">
-            <h3 class="feature-item-title">6. Nuestra historia y contacto</h3>
-            <p class="feature-item-desc">
-              La historia de Flor de Gema, los valores de la empresa, los canales oficiales de atención y las condiciones de compra, envío, cambios y devoluciones.
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- =====================================================================
-         4. CATÁLOGO INTERACTIVO DE GEMAS
+         3. CATÁLOGO INTERACTIVO DE GEMAS:
+         - EN MOBILE: 2x2 = 4 PRODUCTOS VISIBLES
+         - EN PC: 4 COLUMNAS LLENAS DE PRODUCTOS
          ===================================================================== -->
     <section class="catalog-section-clean container" id="catalogo">
       <h2 class="section-title-plain">Catálogo de Gemas Disponibles</h2>
@@ -329,14 +225,14 @@
         <!-- Injected via JavaScript -->
       </div>
 
-      <!-- Products Grid -->
+      <!-- Products Grid (4 on PC, 2x2 on Mobile) -->
       <div class="products-grid-clean" id="catalog-grid">
         <!-- Injected via JavaScript -->
       </div>
     </section>
 
     <!-- =====================================================================
-         5. ACADEMIA GEMOLÓGICA (Guías y Artículos)
+         4. ACADEMIA GEMOLÓGICA (Guías y Artículos)
          ===================================================================== -->
     <section class="academy-section-clean" id="academia">
       <div class="container">
@@ -352,18 +248,20 @@
     </section>
 
     <!-- =====================================================================
-         6. TRANSMISIONES EN VIVO & PREVENTAS (TikTok / Instagram)
+         5. TRANSMISIONES EN VIVO & PREVENTAS (TikTok / Instagram)
          ===================================================================== -->
     <section class="live-stream-clean container" id="en-vivo">
       <div class="live-stream-grid-clean">
-        <!-- Flyer 2: Live en TikTok & Instagram (Formato Vertical 9:16 Adaptado) -->
+        <!-- Flyer 2: Live en TikTok & Instagram (Formato Vertical 9:16 Adaptado Proporcional) -->
         <a href="https://tiktok.com/@flor.de.gema" target="_blank" rel="noopener" class="flyer-live-frame" title="Seguir transmisiones en vivo en TikTok @flor.de.gema">
           <img src="assets/images/flyer2.webp" alt="Flor De Gema - Live en TikTok ¡No te lo pierdas! Ofertas exclusivas en vivo" loading="lazy">
         </a>
 
         <div>
-          <span class="flyer-tag" style="background: #fee2e2; color: #991b1b;">🔴 En Vivo TikTok & Instagram</span>
-          <h2 class="section-title-plain" style="margin-top: 0.5rem; margin-bottom: 0.8rem;">Gemas Exclusivas, Preventas y En Vivos</h2>
+          <span style="display: inline-flex; align-items: center; gap: 0.4rem; background: #fee2e2; color: #991b1b; font-size: 0.72rem; font-weight: 700; padding: 0.25rem 0.65rem; border-radius: 9999px; text-transform: uppercase;">
+            <span class="live-dot-pulse"></span> En Vivo TikTok & Instagram
+          </span>
+          <h2 class="section-title-plain" style="margin-top: 0.75rem; margin-bottom: 0.8rem;">Gemas Exclusivas, Preventas y En Vivos</h2>
           <p style="color: var(--text-secondary); line-height: 1.6;">
             Participa en nuestras transmisiones en vivo para ver lotes recién salidos de mina, resolver dudas con gemólogos en directo y apartar piezas exclusivas a precio de preventa.
           </p>
@@ -390,10 +288,16 @@
 
           <div class="social-btn-row">
             <a href="https://tiktok.com/@flor.de.gema" target="_blank" rel="noopener" class="btn-black-social">
-              <span>🎵 TikTok: @flor.de.gema</span>
+              <svg viewBox="0 0 24 24">
+                <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.24 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/>
+              </svg>
+              <span>TikTok: @flor.de.gema</span>
             </a>
             <a href="https://instagram.com/flordegema.s" target="_blank" rel="noopener" class="btn-instagram-social">
-              <span>📸 Instagram: @flordegema.s</span>
+              <svg viewBox="0 0 24 24">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+              </svg>
+              <span>Instagram: @flordegema.s</span>
             </a>
           </div>
         </div>
@@ -401,7 +305,7 @@
     </section>
 
     <!-- =====================================================================
-         7. NUESTRA HISTORIA, CONTACTO & FAQ (CON FLYER 3 DE NEGOCIO Y VALORES)
+         6. NUESTRA HISTORIA, CONTACTO & FAQ (CON FLYER 3 DE VALORES)
          ===================================================================== -->
     <section class="contact-section-clean" id="nosotros">
       <div class="container contact-grid-clean">
@@ -581,13 +485,15 @@
     </div>
   </aside>
 
-  <!-- Floating VIP WhatsApp Button -->
+  <!-- Floating VIP WhatsApp Button with Clean SVG -->
   <a href="https://wa.me/573016256746?text=Hola%20Flor%20De%20Gema,%20deseo%20asesor%C3%ADa%20personalizada" 
      target="_blank" 
      rel="noopener" 
      class="wa-float-circle" 
      aria-label="WhatsApp Flor De Gema">
-    💬
+    <svg viewBox="0 0 24 24">
+      <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.007c.107.005.249-.041.39.296.144.347.491 1.2.534 1.288.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86.174.086.275.072.376-.044.102-.115.433-.506.549-.68.116-.173.231-.144.39-.086s1.011.477 1.184.564c.173.086.289.13.332.202.043.072.043.419-.101.824z"/>
+    </svg>
   </a>
 
   <!-- Scripts -->
