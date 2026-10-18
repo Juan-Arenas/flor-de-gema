@@ -27,6 +27,80 @@
 
   <!-- Clean Stylesheet -->
   <link rel="stylesheet" href="css/styles.css">
+
+  <!-- Instant Modal Bootstrapper -->
+  <script>
+    var _lastModalOpen = 0;
+    window.openAdminAuthModal = function(e) {
+      var now = Date.now();
+      if (now - _lastModalOpen < 350) return;
+      _lastModalOpen = now;
+      if (e) {
+        try {
+          if (typeof e.preventDefault === 'function') e.preventDefault();
+          if (typeof e.stopPropagation === 'function') e.stopPropagation();
+        } catch (_) {}
+      }
+      if (sessionStorage.getItem('fdg_admin_token') === '1072' && typeof window.openAdminPanel === 'function') {
+        window.openAdminPanel();
+        return;
+      }
+      var modal = document.getElementById('admin-password-modal');
+      if (modal) {
+        modal.classList.add('open');
+        modal.style.display = 'flex';
+        modal.style.opacity = '1';
+        modal.style.visibility = 'visible';
+        modal.style.pointerEvents = 'auto';
+        modal.style.zIndex = '99999';
+        document.body.style.overflow = 'hidden';
+        setTimeout(function() {
+          var input = document.getElementById('admin-pin-1');
+          if (input) input.focus();
+        }, 120);
+      }
+    };
+    window.closeAdminAuthModal = function() {
+      var modal = document.getElementById('admin-password-modal');
+      if (modal) {
+        modal.classList.remove('open');
+        modal.style.display = 'none';
+        modal.style.opacity = '0';
+        modal.style.visibility = 'hidden';
+        modal.style.pointerEvents = 'none';
+        document.body.style.overflow = '';
+      }
+    };
+    window.openAdminPanel = function() {
+      window.closeAdminAuthModal();
+      var panel = document.getElementById('admin-panel-modal');
+      if (panel) {
+        panel.classList.add('open');
+        panel.style.display = 'flex';
+        panel.style.opacity = '1';
+        panel.style.visibility = 'visible';
+        panel.style.pointerEvents = 'auto';
+        panel.style.zIndex = '99999';
+        document.body.style.overflow = 'hidden';
+      }
+      if (typeof window.renderAdminGemsTable === 'function') window.renderAdminGemsTable();
+      if (typeof window.updateAdminStats === 'function') window.updateAdminStats();
+      if (typeof window.renderLogs === 'function') window.renderLogs();
+      if (typeof window.populateAdminLiveForm === 'function') window.populateAdminLiveForm();
+      if (typeof window.renderAdminTikTokTable === 'function') window.renderAdminTikTokTable();
+    };
+    window.closeAdminPanel = function() {
+      var panel = document.getElementById('admin-panel-modal');
+      if (panel) {
+        panel.classList.remove('open');
+        panel.style.display = 'none';
+        panel.style.opacity = '0';
+        panel.style.visibility = 'hidden';
+        panel.style.pointerEvents = 'none';
+        document.body.style.overflow = '';
+      }
+    };
+  </script>
 </head>
 <body>
 
@@ -74,8 +148,8 @@
         </a>
 
         <!-- Candadito solo sin texto -->
-        <button id="header-admin-btn" class="header-icon-btn admin-lock-icon-btn" title="Acceso" aria-label="Acceso">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <button type="button" id="header-admin-btn" class="header-icon-btn admin-lock-icon-btn" onclick="openAdminAuthModal(event)" ontouchend="openAdminAuthModal(event)" title="Acceso" aria-label="Acceso">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="pointer-events: none;">
             <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
             <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
           </svg>
@@ -101,6 +175,13 @@
         <a href="#nosotros" class="submenu-item">Nosotros</a>
         <span class="submenu-dot">·</span>
         <a href="#contacto" class="submenu-item">Contacto</a>
+        <span class="submenu-dot">·</span>
+        <button type="button" class="admin-lock-icon-btn" onclick="openAdminAuthModal(event)" ontouchend="openAdminAuthModal(event)" title="Acceso" aria-label="Acceso" style="padding: 2px 4px; min-width: 30px; min-height: 30px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px; pointer-events: none;">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+        </button>
       </div>
     </div>
   </header>
@@ -624,8 +705,8 @@
         <div style="display: flex; align-items: center; gap: 8px;">
           <span>flordegema.com</span>
           <!-- Candadito solo sin texto -->
-          <button id="admin-lock-btn" class="admin-lock-icon-btn" title="Acceso" aria-label="Acceso">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <button type="button" id="admin-lock-btn" class="admin-lock-icon-btn" onclick="openAdminAuthModal(event)" ontouchend="openAdminAuthModal(event)" title="Acceso" aria-label="Acceso">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="pointer-events: none;">
               <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
               <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
             </svg>
@@ -675,9 +756,9 @@
        MODALES ADMINISTRATIVOS (PIN 1072 & PANEL CRUD + LOGS + NEON DB)
        ======================================================================= -->
   <!-- 1. Modal Autenticación con PIN 1072 -->
-  <div class="modal-overlay" id="admin-password-modal">
+  <div class="modal-overlay" id="admin-password-modal" onclick="if(event.target === this) closeAdminAuthModal()">
     <div class="modal-clean-card admin-auth-card">
-      <button class="modal-clean-close" id="admin-auth-close-btn">✕</button>
+      <button class="modal-clean-close" id="admin-auth-close-btn" onclick="closeAdminAuthModal()">✕</button>
       <div class="admin-auth-header">
         <div class="admin-auth-icon">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -726,8 +807,7 @@
           </span>
           <span class="admin-stat-pill" id="admin-stat-gems-count">10 Gemas</span>
           <span class="admin-stat-pill" id="admin-stat-logs-count">0 Logs</span>
-          <button class="btn-action-small" id="admin-logout-btn" title="Cerrar sesión">Salir</button>
-          <button class="modal-clean-close" id="admin-panel-close-btn" style="position: static; margin-left: 8px;">✕</button>
+          <button class="modal-clean-close" id="admin-panel-close-btn" onclick="closeAdminPanel()" style="position: static; margin-left: 8px;">✕</button>
         </div>
       </div>
 
@@ -1137,8 +1217,8 @@
   </div>
 
   <!-- Persistent Floating Corner Logo (Always visible in corner as requested) -->
-  <a href="#inicio" class="floating-corner-logo" title="Flor De Gema - Inicio">
-    <img src="logo.webp" alt="Flor De Gema">
+  <a href="javascript:void(0)" onclick="openAdminAuthModal(event)" ontouchend="openAdminAuthModal(event)" class="floating-corner-logo" title="Flor De Gema">
+    <img src="logo.webp" alt="Flor De Gema" style="pointer-events: none;">
   </a>
 
   <!-- Floating VIP WhatsApp Button with Clean SVG -->

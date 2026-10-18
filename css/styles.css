@@ -1091,21 +1091,24 @@ button {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.65);
+  background: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(4px);
-  z-index: 2000;
-  display: flex;
+  z-index: 99990;
+  display: none;
   align-items: center;
   justify-content: center;
   padding: 1.25rem;
   opacity: 0;
-  visibility: hidden;
-  transition: var(--transition);
+  pointer-events: none;
+  transition: opacity 0.2s ease-in-out;
 }
 
 .modal-overlay.open {
-  opacity: 1;
-  visibility: visible;
+  display: flex !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  z-index: 99999 !important;
 }
 
 .modal-clean-card {
@@ -1444,24 +1447,31 @@ button {
   background: transparent;
   border: none;
   cursor: pointer;
-  padding: 6px;
-  color: #64748b;
+  padding: 8px;
+  min-width: 44px;
+  min-height: 44px;
+  color: #4b5563;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
   transition: all 0.2s ease;
+  pointer-events: auto;
 }
 
-.admin-lock-icon-btn:hover {
+.admin-lock-icon-btn:hover,
+.admin-lock-icon-btn:active {
   color: #111827;
-  background: var(--bg-subtle);
-  transform: scale(1.1);
+  background: rgba(0, 0, 0, 0.06);
+  transform: scale(1.08);
 }
 
 .admin-lock-icon-btn svg {
-  width: 17px;
-  height: 17px;
+  width: 20px;
+  height: 20px;
+  pointer-events: none;
 }
 
 .admin-hidden-lock-btn {
@@ -1555,9 +1565,9 @@ button {
 .admin-fullscreen-modal {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.7);
+  background: rgba(15, 23, 42, 0.75);
   backdrop-filter: blur(4px);
-  z-index: 3000;
+  z-index: 99995;
   display: none;
   align-items: center;
   justify-content: center;
@@ -1565,7 +1575,8 @@ button {
 }
 
 .admin-fullscreen-modal.open {
-  display: flex;
+  display: flex !important;
+  z-index: 99995 !important;
 }
 
 .admin-panel-content {

@@ -998,26 +998,23 @@ Eslogan: "Flor De Gema, Invierte en belleza eterna"`;
   // PANEL ADMINISTRATIVO & AUTENTICACIÓN (PIN 1072)
   // ========================================================================
   function initAdminFeatures() {
-    // Botones de acceso a Panel Admin (Header, Submenu, Footer)
-    document.getElementById('header-admin-btn')?.addEventListener('click', (e) => {
-      e.preventDefault();
-      openAdminAuthModal();
-    });
+    // Botones de acceso a Panel Admin (Header, Footer, Floating Logo)
+    const headerBtn = document.getElementById('header-admin-btn');
+    if (headerBtn) {
+      headerBtn.addEventListener('click', (e) => window.openAdminAuthModal(e));
+      headerBtn.addEventListener('touchend', (e) => window.openAdminAuthModal(e));
+    }
 
-    document.getElementById('submenu-admin-link')?.addEventListener('click', (e) => {
-      e.preventDefault();
-      openAdminAuthModal();
-    });
+    if (adminLockBtn) {
+      adminLockBtn.addEventListener('click', (e) => window.openAdminAuthModal(e));
+      adminLockBtn.addEventListener('touchend', (e) => window.openAdminAuthModal(e));
+    }
 
-    document.getElementById('footer-admin-link')?.addEventListener('click', (e) => {
-      e.preventDefault();
-      openAdminAuthModal();
-    });
-
-    adminLockBtn?.addEventListener('click', (e) => {
-      e.preventDefault();
-      openAdminAuthModal();
-    });
+    const floatingLogo = document.querySelector('.floating-corner-logo');
+    if (floatingLogo) {
+      floatingLogo.addEventListener('click', (e) => window.openAdminAuthModal(e));
+      floatingLogo.addEventListener('touchend', (e) => window.openAdminAuthModal(e));
+    }
 
     // Triple click en logo para abrir admin
     let logoClicks = 0;
@@ -1211,38 +1208,83 @@ Eslogan: "Flor De Gema, Invierte en belleza eterna"`;
     });
   }
 
-  function openAdminAuthModal() {
+  window.openAdminAuthModal = function(e) {
+    if (e) {
+      try {
+        if (typeof e.preventDefault === 'function') e.preventDefault();
+        if (typeof e.stopPropagation === 'function') e.stopPropagation();
+      } catch (_) {}
+    }
     if (sessionStorage.getItem('fdg_admin_token') === ADMIN_PIN) {
-      openAdminPanel();
+      window.openAdminPanel();
       return;
     }
     pinInputs.forEach(p => { if (p) p.value = ''; });
     if (adminAuthError) adminAuthError.textContent = '';
-    adminPasswordModal?.classList.add('open');
+    
+    const modal = adminPasswordModal || document.getElementById('admin-password-modal');
+    if (modal) {
+      modal.classList.add('open');
+      modal.style.display = 'flex';
+      modal.style.opacity = '1';
+      modal.style.visibility = 'visible';
+      modal.style.pointerEvents = 'auto';
+      modal.style.zIndex = '99999';
+    }
     document.body.style.overflow = 'hidden';
-    setTimeout(() => { pinInputs[0]?.focus(); }, 150);
-  }
+    setTimeout(() => {
+      const p1 = document.getElementById('admin-pin-1');
+      if (p1) p1.focus();
+    }, 120);
+  };
 
-  function closeAdminAuthModal() {
-    adminPasswordModal?.classList.remove('open');
+  window.closeAdminAuthModal = function() {
+    const modal = adminPasswordModal || document.getElementById('admin-password-modal');
+    if (modal) {
+      modal.classList.remove('open');
+      modal.style.display = 'none';
+      modal.style.opacity = '0';
+      modal.style.visibility = 'hidden';
+      modal.style.pointerEvents = 'none';
+    }
     document.body.style.overflow = '';
-  }
+  };
 
-  function openAdminPanel() {
-    closeAdminAuthModal();
-    adminPanelModal?.classList.add('open');
+  window.openAdminPanel = function() {
+    window.closeAdminAuthModal();
+    const panel = adminPanelModal || document.getElementById('admin-panel-modal');
+    if (panel) {
+      panel.classList.add('open');
+      panel.style.display = 'flex';
+      panel.style.opacity = '1';
+      panel.style.visibility = 'visible';
+      panel.style.pointerEvents = 'auto';
+      panel.style.zIndex = '99999';
+    }
     document.body.style.overflow = 'hidden';
-    renderAdminGemsTable();
-    updateAdminStats();
-    renderLogs();
-    populateAdminLiveForm();
-    renderAdminTikTokTable();
-  }
+    try { renderAdminGemsTable(); } catch (_) {}
+    try { updateAdminStats(); } catch (_) {}
+    try { renderLogs(); } catch (_) {}
+    try { populateAdminLiveForm(); } catch (_) {}
+    try { renderAdminTikTokTable(); } catch (_) {}
+  };
 
-  function closeAdminPanel() {
-    adminPanelModal?.classList.remove('open');
+  window.closeAdminPanel = function() {
+    const panel = adminPanelModal || document.getElementById('admin-panel-modal');
+    if (panel) {
+      panel.classList.remove('open');
+      panel.style.display = 'none';
+      panel.style.opacity = '0';
+      panel.style.visibility = 'hidden';
+      panel.style.pointerEvents = 'none';
+    }
     document.body.style.overflow = '';
-  }
+  };
+
+  function openAdminAuthModal(e) { window.openAdminAuthModal(e); }
+  function closeAdminAuthModal() { window.closeAdminAuthModal(); }
+  function openAdminPanel() { window.openAdminPanel(); }
+  function closeAdminPanel() { window.closeAdminPanel(); }
 
   async function validateAdminPin(pin) {
     if (pin === ADMIN_PIN) {
