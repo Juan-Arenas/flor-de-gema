@@ -233,10 +233,35 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (_) {}
   }
 
+  function sanitizeLogDetails(details) {
+    if (!details || typeof details !== 'object') return {};
+    const clean = {};
+    for (const key of Object.keys(details)) {
+      const val = details[key];
+      if (typeof val === 'string' && val.startsWith('data:image/')) {
+        clean[key] = `[Foto Base64 ~${Math.round(val.length / 1024)} KB]`;
+      } else if (Array.isArray(val)) {
+        clean[key] = val.map(item => {
+          if (typeof item === 'string' && item.startsWith('data:image/')) {
+            return `[Foto Base64 ~${Math.round(item.length / 1024)} KB]`;
+          }
+          if (item && typeof item === 'object' && item.url && String(item.url).startsWith('data:')) {
+            return { ...item, url: `[Media Base64 ~${Math.round(String(item.url).length / 1024)} KB]` };
+          }
+          return item;
+        });
+      } else {
+        clean[key] = val;
+      }
+    }
+    return clean;
+  }
+
   function logValenEvent(status, action, message, details = {}, level = 'INFO') {
     const now = new Date();
     const pad = (n) => String(n).padStart(2, '0');
     const timeFormatted = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())} ${pad(now.getDate())}/${pad(now.getMonth() + 1)}`;
+    const sanitized = sanitizeLogDetails(details);
     const logEntry = {
       id: 'log_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6),
       timestamp: now.toISOString(),
@@ -244,7 +269,7 @@ document.addEventListener('DOMContentLoaded', () => {
       status: status || 'OK',
       action: action || 'EVENT',
       message: message || '',
-      details: details || {},
+      details: sanitized,
       level: level || 'INFO'
     };
 
@@ -1518,11 +1543,31 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   window.toggleProductState = toggleProductState;
 
-  function deleteProduct(gemId) {
+  async function deleteProduct(gemId) {
     const gem = gemsList.find(g => g.id === gemId || String(g.rawId) === String(gemId));
     if (!gem) return;
 
     if (!confirm(`¿Estás seguro de eliminar "${gem.name}" (${gem.id}) del catálogo?`)) return;
+
+    const rawId = gem.rawId || String(gemId).replace(/\D/g, '');
+
+    // Sincronizar borrado con Neon
+    if (rawId) {
+      try {
+        const res = await fetch(`/api/gemstones/${rawId}`, {
+          method: 'DELETE',
+          headers: {
+            'x-admin-password': currentAdminPin,
+            'Authorization': `Bearer ${currentAdminPin}`
+          }
+        });
+        if (!res.ok && res.status !== 404) {
+          console.warn('Error eliminando gema en Neon:', res.status);
+        }
+      } catch (err) {
+        console.warn('Fallo de red al sincronizar borrado con Neon:', err);
+      }
+    }
 
     gemsList = gemsList.filter(g => g.id !== gemId && String(g.rawId) !== String(gemId));
     localStorage.setItem('fdg_gemstones_cache', JSON.stringify(gemsList));
@@ -1534,19 +1579,105 @@ document.addEventListener('DOMContentLoaded', () => {
     updateAdminStats();
 
     logValenEvent('OK', 'PRODUCT_DELETE', `Gema eliminada: "${gem.name}" (${gem.id})`, { gemId, name: gem.name });
-
-    // Sincronizar borrado con Neon
-    try {
-      const rawId = gem.rawId || String(gemId).replace(/\D/g, '');
-      if (rawId) {
-        fetch(`/api/gemstones/${rawId}`, {
-          method: 'DELETE',
-          headers: { 'x-admin-password': currentAdminPin }
-        }).catch(() => {});
-      }
-    } catch (_) {}
   }
   window.deleteProduct = deleteProduct;
+
+  function compressImageFile(file, maxWidth = 1200, maxHeight = 1200, quality = 0.8) {
+    return new Promise((resolve) => {
+      if (!file || !file.type || !file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = e => resolve(e.target.result);
+        reader.onerror = () => resolve('');
+        reader.readAsDataURL(file);
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          let width = img.width;
+          let height = img.height;
+          if (width > maxWidth || height > maxHeight) {
+            if (width > height) {
+              height = Math.round((height * maxWidth) / width);
+              width = maxWidth;
+            } else {
+              width = Math.round((width * maxHeight) / height);
+              height = maxHeight;
+            }
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          let dataUrl = canvas.toDataURL('image/webp', quality);
+          if (!dataUrl || dataUrl.length < 50 || !dataUrl.startsWith('data:image/webp')) {
+            dataUrl = canvas.toDataURL('image/jpeg', quality);
+          }
+          resolve(dataUrl);
+        };
+        img.onerror = () => resolve(e.target.result);
+        img.src = e.target.result;
+      };
+      reader.onerror = () => resolve('');
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function compressDataUrl(dataUrl, maxWidth = 1200, maxHeight = 1200, quality = 0.8) {
+    return new Promise((resolve) => {
+      if (!dataUrl || typeof dataUrl !== 'string' || !dataUrl.startsWith('data:image/')) {
+        return resolve(dataUrl);
+      }
+      if (dataUrl.length < 180000) {
+        return resolve(dataUrl);
+      }
+      const img = new Image();
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
+        if (width > maxWidth || height > maxHeight) {
+          if (width > height) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          } else {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+
+        let resUrl = canvas.toDataURL('image/webp', quality);
+        if (!resUrl || resUrl.length < 50 || !resUrl.startsWith('data:image/webp')) {
+          resUrl = canvas.toDataURL('image/jpeg', quality);
+        }
+        resolve(resUrl);
+      };
+      img.onerror = () => resolve(dataUrl);
+      img.src = dataUrl;
+    });
+  }
+
+  async function syncCategoryToDatabase(name) {
+    if (!name) return;
+    try {
+      await fetch('/api/categories', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-password': currentAdminPin,
+          'Authorization': `Bearer ${currentAdminPin}`
+        },
+        body: JSON.stringify({ name, adminPassword: currentAdminPin })
+      });
+    } catch (_) {}
+  }
 
   async function handleProductFormSubmit(e) {
     e.preventDefault();
@@ -1578,9 +1709,28 @@ document.addEventListener('DOMContentLoaded', () => {
       populateAdminCategorySelect();
       renderAdminCategoryChips();
       renderAdminCategoryPills();
+      syncCategoryToDatabase(catNew);
     }
 
-    const mainCover = currentGemPhotos[0] || 'assets/images/emerald-gem.jpg';
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    const originalBtnText = submitBtn ? submitBtn.innerHTML : 'Guardar';
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando y publicando en la nube...';
+    }
+
+    // Comprimir fotos para asegurar peso óptimo (< 150KB cada una)
+    const compressedPhotos = [];
+    for (const photo of currentGemPhotos) {
+      if (typeof photo === 'string' && photo.startsWith('data:image/')) {
+        const comp = await compressDataUrl(photo, 1200, 1200, 0.8);
+        compressedPhotos.push(comp);
+      } else {
+        compressedPhotos.push(photo);
+      }
+    }
+
+    const mainCover = compressedPhotos[0] || 'assets/images/emerald-gem.jpg';
 
     const payload = {
       name,
@@ -1599,7 +1749,7 @@ document.addEventListener('DOMContentLoaded', () => {
       reportNumber: cert,
       lab: cert,
       image: mainCover,
-      images: [...currentGemPhotos],
+      images: [...compressedPhotos],
       videos: [...currentGemVideos],
       featured: true,
       status: active ? 'Disponible' : 'Oculto',
@@ -1608,56 +1758,100 @@ document.addEventListener('DOMContentLoaded', () => {
       description: `Piedra preciosa natural seleccionada por su belleza y color único. "Flor De Gema, Invierte en belleza eterna".`
     };
 
-    if (idInput) {
-      // Edición existente
-      const idx = gemsList.findIndex(g => g.id === idInput || String(g.rawId) === idInput);
-      if (idx > -1) {
-        gemsList[idx] = { ...gemsList[idx], ...payload };
-        logValenEvent('OK', 'PRODUCT_UPDATE', `Gema actualizada: "${name}" (${idInput}) [${currentGemPhotos.length} fotos, ${currentGemVideos.length} videos]`, payload);
-      }
-    } else {
-      // Creación nueva
-      const newId = `FDG-${Date.now().toString().slice(-4)}`;
-      const newGem = { id: newId, rawId: Date.now(), ...payload };
-      gemsList.unshift(newGem);
-      logValenEvent('OK', 'PRODUCT_CREATE', `Nueva gema creada: "${name}" ($${formatCOP(price)}) [${currentGemPhotos.length} fotos, ${currentGemVideos.length} videos]`, payload);
-    }
+    const isEdit = Boolean(idInput);
+    const existingGem = isEdit ? gemsList.find(g => g.id === idInput || String(g.rawId) === idInput) : null;
+    const rawId = existingGem ? (existingGem.rawId || String(existingGem.id).replace(/\D/g, '')) : null;
 
-    localStorage.setItem('fdg_gemstones_cache', JSON.stringify(gemsList));
-    renderAdminProductsList();
-    renderAdminCategoryChips();
-    renderAdminCategoryPills();
-    renderCatalog();
-    updateAdminStats();
+    const endpoint = (isEdit && rawId) ? `/api/gemstones/${rawId}` : '/api/gemstones';
+    const method = (isEdit && rawId) ? 'PUT' : 'POST';
 
-    // Guardar en Neon vía API en segundo plano
     try {
-      fetch('/api/gemstones', {
-        method: 'POST',
+      const res = await fetch(endpoint, {
+        method,
         headers: {
           'Content-Type': 'application/json',
-          'x-admin-password': currentAdminPin
+          'x-admin-password': currentAdminPin,
+          'Authorization': `Bearer ${currentAdminPin}`
         },
         body: JSON.stringify({
           ...payload,
           price,
           weight_ct: payload.carats,
           dimensions_mm: payload.dimensions,
-          certificate: payload.reportNumber
+          certificate: payload.reportNumber,
+          image: mainCover,
+          images: compressedPhotos,
+          adminPassword: currentAdminPin
         })
-      }).catch(() => {});
-    } catch (_) {}
+      });
 
-    resetAdminProductForm();
-    const panel = document.getElementById('admin-product-panel');
-    if (panel) {
-      panel.style.display = 'none';
-      panel.classList.add('hidden');
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        let errMsg = errData.error || errData.message || `Error del servidor HTTP ${res.status}`;
+        if (res.status === 413) {
+          errMsg = 'Las imágenes seleccionadas exceden el límite permitido. Se recomienda subir fotos de menor resolución.';
+        } else if (res.status === 401) {
+          errMsg = 'Acceso no autorizado: El PIN administrativo no coincide con el servidor.';
+        }
+        alert(`⚠️ No se pudo guardar en la base de datos central:\n${errMsg}`);
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalBtnText;
+        }
+        return;
+      }
+
+      const savedRow = await res.json();
+      const finalRawId = savedRow.id || (existingGem ? existingGem.rawId : Date.now());
+      const finalId = `FDG-${finalRawId}`;
+
+      const finalGem = {
+        ...payload,
+        id: finalId,
+        rawId: finalRawId,
+        image: savedRow.image || mainCover,
+        images: Array.isArray(savedRow.images) && savedRow.images.length > 0 ? savedRow.images : compressedPhotos,
+        videos: Array.isArray(savedRow.videos) ? savedRow.videos : payload.videos
+      };
+
+      if (isEdit) {
+        const idx = gemsList.findIndex(g => g.id === idInput || String(g.rawId) === idInput);
+        if (idx > -1) {
+          gemsList[idx] = finalGem;
+        } else {
+          gemsList.unshift(finalGem);
+        }
+        logValenEvent('OK', 'PRODUCT_UPDATE', `Gema actualizada en la nube: "${name}" (${finalId})`, { id: finalId, name, price });
+      } else {
+        gemsList.unshift(finalGem);
+        logValenEvent('OK', 'PRODUCT_CREATE', `Nueva gema creada y publicada en Neon: "${name}" ($${formatCOP(price)})`, { id: finalId, name, price });
+      }
+
+      localStorage.setItem('fdg_gemstones_cache', JSON.stringify(gemsList));
+      renderAdminProductsList();
+      renderAdminCategoryChips();
+      renderAdminCategoryPills();
+      renderCatalog();
+      updateAdminStats();
+
+      resetAdminProductForm();
+      const panel = document.getElementById('admin-product-panel');
+      if (panel) {
+        panel.style.display = 'none';
+        panel.classList.add('hidden');
+      }
+      const toggleBtn = document.getElementById('admin-product-toggle');
+      if (toggleBtn) toggleBtn.innerHTML = '<i class="fas fa-plus"></i> Abrir Formulario';
+
+      alert(`¡Piedra preciosa publicada exitosamente en la nube!\nAhora todos los clientes y visitantes pueden verla en vivo.`);
+    } catch (err) {
+      alert(`⚠️ Error de conexión al guardar en la nube:\n${err.message}`);
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalBtnText;
+      }
     }
-    const toggleBtn = document.getElementById('admin-product-toggle');
-    if (toggleBtn) toggleBtn.innerHTML = '<i class="fas fa-plus"></i> Abrir Formulario';
-
-    alert(`¡Piedra preciosa guardada exitosamente con ${payload.images.length} foto(s) y ${payload.videos.length} video(s)!`);
   }
 
   // ------------------------------------------------------------------------
@@ -1841,13 +2035,116 @@ document.addEventListener('DOMContentLoaded', () => {
   // ------------------------------------------------------------------------
   // 15. SINCRONIZACIÓN NEON POSTGRESQL SERVERLESS
   // ------------------------------------------------------------------------
+  async function uploadLocalGemsToNeon() {
+    if (!gemsList || gemsList.length === 0) return 0;
+    let uploadedCount = 0;
+    for (const gem of gemsList) {
+      try {
+        const compressedPhotos = [];
+        const rawPhotos = Array.isArray(gem.images) && gem.images.length > 0 ? gem.images : (gem.image ? [gem.image] : []);
+        for (const photo of rawPhotos) {
+          if (typeof photo === 'string' && photo.startsWith('data:image/')) {
+            const comp = await compressDataUrl(photo, 1200, 1200, 0.8);
+            compressedPhotos.push(comp);
+          } else {
+            compressedPhotos.push(photo);
+          }
+        }
+
+        const mainImg = compressedPhotos[0] || gem.image || 'assets/images/emerald-gem.jpg';
+
+        const res = await fetch('/api/gemstones', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-admin-password': currentAdminPin,
+            'Authorization': `Bearer ${currentAdminPin}`
+          },
+          body: JSON.stringify({
+            name: gem.name,
+            category: gem.displayCategory || gem.category || 'Esmeraldas',
+            price: gem.priceCOP || gem.price || 0,
+            weight_ct: gem.carats || '',
+            dimensions_mm: gem.dimensions || '',
+            origin: gem.origin || 'Colombia',
+            cut: gem.cut || 'Facetado',
+            color: gem.color || 'Verde Natural',
+            treatment: gem.treatment || 'Natural',
+            certificate: gem.reportNumber || gem.certificate || '',
+            description: gem.description || '',
+            image: mainImg,
+            images: compressedPhotos.length > 0 ? compressedPhotos : [mainImg],
+            videos: Array.isArray(gem.videos) ? gem.videos : [],
+            status: gem.status || 'Disponible',
+            featured: Boolean(gem.featured),
+            adminPassword: currentAdminPin
+          })
+        });
+
+        if (res.ok) {
+          const row = await res.json();
+          gem.id = `FDG-${row.id}`;
+          gem.rawId = row.id;
+          gem.image = row.image || mainImg;
+          gem.images = Array.isArray(row.images) && row.images.length > 0 ? row.images : compressedPhotos;
+          uploadedCount++;
+        }
+      } catch (err) {
+        console.warn('Error subiendo gema local a Neon:', gem.name, err);
+      }
+    }
+
+    if (uploadedCount > 0) {
+      localStorage.setItem('fdg_gemstones_cache', JSON.stringify(gemsList));
+      renderCatalog();
+      renderAdminProductsList();
+      updateAdminStats();
+      logValenEvent('OK', 'NEON_AUTO_UPLOAD', `${uploadedCount} gemas locales sincronizadas y guardadas en Neon`, { count: uploadedCount });
+    }
+    return uploadedCount;
+  }
+  window.uploadLocalGemsToNeon = uploadLocalGemsToNeon;
+
   async function syncWithNeonDatabase() {
     try {
+      // 1. Sincronizar categorías
+      try {
+        const catRes = await fetch('/api/categories');
+        if (catRes.ok) {
+          const catRows = await catRes.json();
+          if (Array.isArray(catRows) && catRows.length > 0) {
+            const serverCatNames = new Set(catRows.map(c => c.name.toLowerCase()));
+            for (const localCat of adminCategories) {
+              if (localCat.name && !serverCatNames.has(localCat.name.toLowerCase())) {
+                syncCategoryToDatabase(localCat.name).catch(() => {});
+              }
+            }
+            adminCategories = catRows.map(c => ({ id: c.id, name: c.name }));
+            localStorage.setItem('fdg_admin_categories', JSON.stringify(adminCategories));
+            populateAdminCategorySelect();
+            renderAdminCategoryChips();
+            renderAdminCategoryPills();
+          }
+        }
+      } catch (_) {}
+
+      // 2. Sincronizar catálogo de gemas
       const res = await fetch('/api/gemstones');
       if (res.ok) {
         const rows = await res.json();
         if (Array.isArray(rows)) {
           if (rows.length === 0) {
+            // Si la base de datos está vacía pero este navegador tiene gemas creadas localmente:
+            // ¡Subir automáticamente esas gemas locales a Neon para que sean visibles para todos!
+            if (gemsList && gemsList.length > 0) {
+              console.log('[FlorDeGema] Subiendo catálogo local a Neon PostgreSQL Serverless...');
+              const uploaded = await uploadLocalGemsToNeon();
+              if (uploaded > 0) {
+                logValenEvent('OK', 'NEON_SYNC', `Catálogo local (${uploaded} gemas) respaldado y publicado en Neon.`);
+                return;
+              }
+            }
+
             gemsList = [];
             localStorage.setItem('fdg_gemstones_cache', JSON.stringify([]));
             renderCatalog();
@@ -1859,7 +2156,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
           }
 
-          gemsList = rows.map(r => {
+          // Si el servidor devolvió gemas
+          const serverGems = rows.map(r => {
             let images = Array.isArray(r.images) && r.images.length > 0 ? r.images : (r.image ? [r.image] : ['assets/images/emerald-gem.jpg']);
             let videos = Array.isArray(r.videos) ? r.videos : [];
             return {
@@ -1890,13 +2188,71 @@ document.addEventListener('DOMContentLoaded', () => {
             };
           });
 
+          // Si localmente hay gemas que no están en el servidor, subirlas para no perderlas
+          const serverRawIds = new Set(rows.map(r => String(r.id)));
+          const unsynced = gemsList.filter(g => !g.rawId || !serverRawIds.has(String(g.rawId)));
+          if (unsynced.length > 0) {
+            for (const localG of unsynced) {
+              try {
+                const compressed = [];
+                const photos = Array.isArray(localG.images) ? localG.images : (localG.image ? [localG.image] : []);
+                for (const p of photos) {
+                  if (typeof p === 'string' && p.startsWith('data:image/')) {
+                    compressed.push(await compressDataUrl(p, 1200, 1200, 0.8));
+                  } else {
+                    compressed.push(p);
+                  }
+                }
+                const mainImg = compressed[0] || localG.image || 'assets/images/emerald-gem.jpg';
+                const postRes = await fetch('/api/gemstones', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'x-admin-password': currentAdminPin,
+                    'Authorization': `Bearer ${currentAdminPin}`
+                  },
+                  body: JSON.stringify({
+                    name: localG.name,
+                    category: localG.displayCategory || localG.category || 'Esmeraldas',
+                    price: localG.priceCOP || localG.price || 0,
+                    weight_ct: localG.carats || '',
+                    dimensions_mm: localG.dimensions || '',
+                    origin: localG.origin || 'Colombia',
+                    cut: localG.cut || 'Facetado',
+                    color: localG.color || 'Verde Natural',
+                    treatment: localG.treatment || 'Natural',
+                    certificate: localG.reportNumber || localG.certificate || '',
+                    description: localG.description || '',
+                    image: mainImg,
+                    images: compressed.length > 0 ? compressed : [mainImg],
+                    videos: Array.isArray(localG.videos) ? localG.videos : [],
+                    status: localG.status || 'Disponible',
+                    featured: Boolean(localG.featured),
+                    adminPassword: currentAdminPin
+                  })
+                });
+                if (postRes.ok) {
+                  const saved = await postRes.json();
+                  serverGems.unshift({
+                    ...localG,
+                    id: `FDG-${saved.id}`,
+                    rawId: saved.id,
+                    image: saved.image || mainImg,
+                    images: Array.isArray(saved.images) ? saved.images : compressed
+                  });
+                }
+              } catch (_) {}
+            }
+          }
+
+          gemsList = serverGems;
           localStorage.setItem('fdg_gemstones_cache', JSON.stringify(gemsList));
           renderCatalog();
           renderAdminProductsList();
           renderAdminCategoryChips();
           renderAdminCategoryPills();
           updateAdminStats();
-          logValenEvent('OK', 'NEON_SYNC', `Catálogo sincronizado desde Neon PostgreSQL Serverless (${rows.length} gemas)`, { totalGems: rows.length });
+          logValenEvent('OK', 'NEON_SYNC', `Catálogo sincronizado desde Neon PostgreSQL Serverless (${gemsList.length} gemas)`, { totalGems: gemsList.length });
         }
       }
     } catch (e) {
@@ -1973,24 +2329,38 @@ document.addEventListener('DOMContentLoaded', () => {
       };
     }
 
-    // D. Gestor de Fotos: Subir múltiples fotos locales
+    // D. Gestor de Fotos: Subir múltiples fotos locales con compresión automática
     const photosFileInput = document.getElementById('admin-product-images-file');
-    photosFileInput?.addEventListener('change', (e) => {
+    photosFileInput?.addEventListener('change', async (e) => {
       const files = Array.from(e.target.files || []);
       if (files.length === 0) return;
 
-      files.forEach(file => {
-        const reader = new FileReader();
-        reader.onload = (loadEvt) => {
-          const base64 = loadEvt.target.result;
-          currentGemPhotos.push(base64);
-          renderGemPhotosGallery();
-          const hiddenUrl = document.getElementById('admin-product-image-url');
-          if (hiddenUrl && !hiddenUrl.value) hiddenUrl.value = base64;
-        };
-        reader.readAsDataURL(file);
-      });
+      const progressIndicator = document.getElementById('admin-product-message');
+      if (progressIndicator) {
+        progressIndicator.textContent = `Optimizando ${files.length} foto(s)...`;
+        progressIndicator.style.color = '#0284c7';
+      }
+
+      for (const file of files) {
+        try {
+          const compressed = await compressImageFile(file, 1200, 1200, 0.8);
+          if (compressed) {
+            currentGemPhotos.push(compressed);
+            const hiddenUrl = document.getElementById('admin-product-image-url');
+            if (hiddenUrl && !hiddenUrl.value) hiddenUrl.value = compressed;
+          }
+        } catch (err) {
+          console.warn('Error al procesar foto:', err);
+        }
+      }
+
+      renderGemPhotosGallery();
       photosFileInput.value = '';
+      if (progressIndicator) {
+        progressIndicator.textContent = `✓ ${files.length} foto(s) optimizadas y listas.`;
+        progressIndicator.style.color = '#15803d';
+        setTimeout(() => { if (progressIndicator.textContent.includes('optimizadas')) progressIndicator.textContent = ''; }, 3000);
+      }
     });
 
     // Agregar foto por URL
@@ -2074,10 +2444,11 @@ document.addEventListener('DOMContentLoaded', () => {
       renderAdminCategoryChips();
       renderAdminCategoryPills();
       updateAdminStats();
+      syncCategoryToDatabase(val);
       logValenEvent('OK', 'CATEGORY_CREATE', `Nueva categoría agregada: "${val}"`, { categoryName: val });
       const msg = document.getElementById('admin-category-message');
       if (msg) {
-        msg.textContent = `✓ Categoría "${val}" creada correctamente.`;
+        msg.textContent = `✓ Categoría "${val}" creada correctamente en la nube.`;
         setTimeout(() => { msg.textContent = ''; }, 3000);
       }
     });
@@ -2097,6 +2468,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('btn-refresh-orders')?.addEventListener('click', () => {
       renderAdminOrdersTable();
+    });
+
+    // J. Sincronización Manual de Inventario con Neon
+    resyncNeonBtn?.addEventListener('click', async () => {
+      if (!confirm('¿Sincronizar y respaldar todas las gemas en Neon PostgreSQL Serverless?')) return;
+      if (neonFeedback) {
+        neonFeedback.textContent = 'Subiendo y sincronizando gemas con Neon...';
+        neonFeedback.style.color = '#0284c7';
+      }
+      const uploaded = await uploadLocalGemsToNeon();
+      await syncWithNeonDatabase();
+      if (neonFeedback) {
+        neonFeedback.textContent = `✓ Catálogo sincronizado: ${gemsList.length} gemas respaldadas en la nube.`;
+        neonFeedback.style.color = '#15803d';
+      }
+      alert(`✓ Catálogo sincronizado exitosamente con Neon (${gemsList.length} gemas disponibles para todos).`);
     });
 
     document.getElementById('btn-add-order-manual')?.addEventListener('click', () => {
@@ -2215,19 +2602,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    resyncNeonBtn?.addEventListener('click', async () => {
-      if (!confirm('¿Sincronizar y respaldar todas las gemas actuales en Neon PostgreSQL Serverless?')) return;
-      if (neonFeedback) {
-        neonFeedback.textContent = 'Sincronizando gemas con Neon...';
-        neonFeedback.style.color = '#0284c7';
-      }
-      await syncWithNeonDatabase();
-      if (neonFeedback) {
-        neonFeedback.textContent = `✓ Catálogo sincronizado: ${gemsList.length} gemas respaldadas en Neon.`;
-        neonFeedback.style.color = '#15803d';
-      }
-      logValenEvent('OK', 'NEON_RESYNC', `Catálogo completo sincronizado a Neon (${gemsList.length} gemas)`, { totalGems: gemsList.length });
-    });
 
     // N. Cambio de PIN
     const changePinForm = document.getElementById('admin-change-password-form');
