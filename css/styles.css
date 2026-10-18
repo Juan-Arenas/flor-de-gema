@@ -461,63 +461,88 @@ button {
 }
 
 /* ==========================================================================
-   ESPACIOS PARA FLYERS (DISEÑO LIMPIO Y ELEGANTE)
+   ESPACIOS PARA FLYERS ADAPTADOS (PROPORCIONALES & RESPONSIVOS)
    ========================================================================== */
 .flyer-slot-container {
-  margin: 2.5rem 0;
+  margin: 2rem 0;
 }
 
-.flyer-clean-box {
-  background: #fdfbf7;
-  border: 1px dashed #d1c5b4;
+.flyer-banner-wide {
+  width: 100%;
   border-radius: var(--radius-md);
-  padding: 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1.5rem;
-  flex-wrap: wrap;
+  overflow: hidden;
+  border: 1px solid var(--border-card);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  background: var(--bg-white);
+  cursor: pointer;
+  display: block;
 }
 
-.flyer-tag {
-  display: inline-block;
-  background: #fef3c7;
-  color: #92400e;
-  font-size: 0.72rem;
-  font-weight: 700;
-  padding: 0.2rem 0.6rem;
-  border-radius: var(--radius-full);
-  margin-bottom: 0.4rem;
-  text-transform: uppercase;
+.flyer-banner-wide:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
-.flyer-clean-box h4 {
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: #111827;
-  margin-bottom: 0.25rem;
+.flyer-banner-wide img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
 }
 
-.flyer-clean-box p {
-  font-size: 0.88rem;
-  color: var(--text-secondary);
+.flyer-live-frame {
+  max-width: 360px;
+  width: 100%;
+  margin: 0 auto;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--border-card);
+  box-shadow: var(--shadow-md);
+  background: #000;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  display: block;
+  cursor: pointer;
 }
 
-.btn-small-dark {
-  background: var(--bg-dark-btn);
-  color: #fff;
-  font-size: 0.85rem;
-  font-weight: 700;
-  padding: 0.65rem 1.25rem;
-  border-radius: var(--radius-sm);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
+.flyer-live-frame:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
 }
 
-.btn-small-dark:hover {
-  background: var(--bg-dark-btn-hover);
+.flyer-live-frame img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
 }
+
+.flyer-business-frame {
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--border-card);
+  box-shadow: var(--shadow-md);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  display: block;
+  cursor: pointer;
+}
+
+.flyer-business-frame:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+}
+
+.flyer-business-frame img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  display: block;
+}
+
 
 /* ==========================================================================
    CATÁLOGO DE PRODUCTOS / GEMAS (Limpio & Fondo Blanco)
