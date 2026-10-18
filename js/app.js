@@ -998,7 +998,22 @@ Eslogan: "Flor De Gema, Invierte en belleza eterna"`;
   // PANEL ADMINISTRATIVO & AUTENTICACIÓN (PIN 1072)
   // ========================================================================
   function initAdminFeatures() {
-    // 1. Candado Escondidito en Footer
+    // Botones de acceso a Panel Admin (Header, Submenu, Footer)
+    document.getElementById('header-admin-btn')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      openAdminAuthModal();
+    });
+
+    document.getElementById('submenu-admin-link')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      openAdminAuthModal();
+    });
+
+    document.getElementById('footer-admin-link')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      openAdminAuthModal();
+    });
+
     adminLockBtn?.addEventListener('click', (e) => {
       e.preventDefault();
       openAdminAuthModal();
