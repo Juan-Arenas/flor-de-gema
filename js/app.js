@@ -44,6 +44,12 @@ document.addEventListener('DOMContentLoaded', () => {
     wishlist = [];
   }
 
+  // Limpieza inicial forzada del catálogo demo anterior
+  if (!localStorage.getItem('fdg_catalog_cleared_v1')) {
+    localStorage.removeItem('fdg_gemstones_cache');
+    localStorage.setItem('fdg_catalog_cleared_v1', 'true');
+  }
+
   // Carga de catálogo desde cache local o fallback data.js
   let cachedGems = null;
   try {
@@ -1840,7 +1846,19 @@ document.addEventListener('DOMContentLoaded', () => {
       const res = await fetch('/api/gemstones');
       if (res.ok) {
         const rows = await res.json();
-        if (Array.isArray(rows) && rows.length > 0) {
+        if (Array.isArray(rows)) {
+          if (rows.length === 0) {
+            gemsList = [];
+            localStorage.setItem('fdg_gemstones_cache', JSON.stringify([]));
+            renderCatalog();
+            renderAdminProductsList();
+            renderAdminCategoryChips();
+            renderAdminCategoryPills();
+            updateAdminStats();
+            logValenEvent('OK', 'NEON_SYNC', 'Catálogo sincronizado desde Neon: 0 gemas registradas', { totalGems: 0 });
+            return;
+          }
+
           gemsList = rows.map(r => {
             let images = Array.isArray(r.images) && r.images.length > 0 ? r.images : (r.image ? [r.image] : ['assets/images/emerald-gem.jpg']);
             let videos = Array.isArray(r.videos) ? r.videos : [];
@@ -1875,6 +1893,8 @@ document.addEventListener('DOMContentLoaded', () => {
           localStorage.setItem('fdg_gemstones_cache', JSON.stringify(gemsList));
           renderCatalog();
           renderAdminProductsList();
+          renderAdminCategoryChips();
+          renderAdminCategoryPills();
           updateAdminStats();
           logValenEvent('OK', 'NEON_SYNC', `Catálogo sincronizado desde Neon PostgreSQL Serverless (${rows.length} gemas)`, { totalGems: rows.length });
         }
