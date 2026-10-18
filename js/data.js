@@ -7,8 +7,8 @@ const FLOR_DE_GEMA_CONFIG = {
   whatsappNumber: "573016256746",
   whatsappDisplay: "+57 301 625 6746",
   social: {
-    instagram: "https://instagram.com/flordegema.s",
-    instagramHandle: "@flordegema.s",
+    instagram: "https://instagram.com/flordegemas",
+    instagramHandle: "@flordegemas",
     tiktok: "https://tiktok.com/@flor.de.gema",
     tiktokHandle: "@flor.de.gema",
     facebook: "https://facebook.com/flordegema",

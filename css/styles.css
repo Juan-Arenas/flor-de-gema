@@ -1299,3 +1299,885 @@ button {
   flex-wrap: wrap;
   gap: 1rem;
 }
+
+/* ==========================================================================
+   POLÍTICAS DE COMPRA, ENVÍOS Y GARANTÍAS
+   ========================================================================== */
+.section-policies {
+  padding: 4.5rem 0;
+  border-top: 1px solid var(--border-light);
+}
+
+.policies-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.75rem;
+  margin-top: 2rem;
+}
+
+@media (min-width: 900px) {
+  .policies-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.policy-card {
+  background: var(--bg-white);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-md);
+  padding: 2rem 1.75rem;
+  display: flex;
+  flex-direction: column;
+  transition: var(--transition);
+  position: relative;
+}
+
+.policy-card:hover {
+  border-color: #cbd5e1;
+  box-shadow: var(--shadow-sm);
+}
+
+.policy-card-highlight {
+  border-color: #1c2e28;
+  background: #fcfdfc;
+}
+
+.policy-card-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #f1f5f3;
+  color: #1c2e28;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+}
+
+.policy-card-title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #111827;
+  margin-bottom: 1rem;
+}
+
+.policy-card-p {
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+  line-height: 1.65;
+  margin-bottom: 0.85rem;
+}
+
+.policy-sub-heading {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #111827;
+  margin-top: 1.25rem;
+  margin-bottom: 0.65rem;
+}
+
+.policy-steps-list {
+  padding-left: 1.2rem;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.policy-steps-list strong,
+.policy-bullets-list strong {
+  color: #111827;
+}
+
+.policy-bullets-list {
+  padding-left: 1.2rem;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.policy-highlight-box {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  padding: 1rem 1.15rem;
+  margin-top: auto;
+}
+
+.policy-highlight-box h4 {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 0.4rem;
+}
+
+.policy-highlight-box p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.policy-commitment-banner {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #166534;
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 0.92rem;
+  margin-top: auto;
+}
+
+/* ==========================================================================
+   HIDDEN LOCK BUTTON & ADMIN STYLES
+   ========================================================================== */
+.admin-hidden-lock-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  color: #94a3b8;
+  opacity: 0.35;
+  transition: opacity 0.2s ease, color 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+}
+
+.admin-hidden-lock-btn:hover {
+  opacity: 1;
+  color: #111827;
+}
+
+/* Admin Auth Modal */
+.admin-auth-card {
+  max-width: 380px !important;
+  text-align: center;
+  padding: 2.25rem 2rem !important;
+}
+
+.admin-auth-icon {
+  width: 52px;
+  height: 52px;
+  background: #f3f4f6;
+  color: #111827;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+}
+
+.admin-auth-header h3 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #111827;
+  margin-bottom: 0.35rem;
+}
+
+.admin-auth-header p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 1.25rem;
+}
+
+.pin-inputs-row {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 1rem;
+}
+
+.pin-digit {
+  width: 48px;
+  height: 56px;
+  text-align: center;
+  font-size: 1.6rem;
+  font-weight: 800;
+  font-family: inherit;
+  border: 1.5px solid var(--border-card);
+  border-radius: 8px;
+  background: #f8fafc;
+  color: #111827;
+  transition: border-color 0.2s;
+}
+
+.pin-digit:focus {
+  outline: none;
+  border-color: #111827;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.1);
+}
+
+.admin-auth-error {
+  color: #dc2626;
+  font-size: 0.82rem;
+  font-weight: 600;
+  min-height: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Admin Dashboard Modal */
+.admin-fullscreen-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: 3000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.admin-fullscreen-modal.open {
+  display: flex;
+}
+
+.admin-panel-content {
+  background: #ffffff;
+  width: 100%;
+  max-width: 1160px;
+  height: 92vh;
+  border-radius: 14px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--border-light);
+}
+
+.admin-panel-header {
+  padding: 1.15rem 1.75rem;
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.admin-header-title-wrap h2 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #111827;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-subtitle {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin: 0.2rem 0 0;
+}
+
+.admin-header-stats {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.admin-stat-pill {
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.35rem 0.75rem;
+  border-radius: 9999px;
+  background: #f1f5f9;
+  color: #334155;
+}
+
+.admin-stat-pill-live {
+  background: #dcfce7;
+  color: #15803d;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.admin-tabs-nav {
+  display: flex;
+  background: #f8fafc;
+  border-bottom: 1px solid var(--border-light);
+  padding: 0 1.5rem;
+  gap: 6px;
+  overflow-x: auto;
+}
+
+.admin-tab-btn {
+  padding: 0.75rem 1.25rem;
+  border: none;
+  background: transparent;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #64748b;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.admin-tab-btn:hover {
+  color: #111827;
+}
+
+.admin-tab-btn.active {
+  color: #111827;
+  border-bottom-color: #111827;
+  background: #ffffff;
+}
+
+.admin-panel-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem 1.75rem;
+  background: #fafbfc;
+}
+
+.admin-tab-pane {
+  display: none;
+}
+
+.admin-tab-pane.active {
+  display: block;
+}
+
+/* Admin Form & Controls */
+.admin-card-box {
+  background: #ffffff;
+  border: 1px solid var(--border-card);
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.admin-card-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.admin-card-title-row h3 {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #111827;
+  margin: 0;
+}
+
+.admin-form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 680px) {
+  .admin-form-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .admin-grid-full {
+    grid-column: 1 / -1;
+  }
+}
+
+.admin-input-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.admin-input-wrap label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #374151;
+}
+
+.admin-input-wrap input,
+.admin-input-wrap select,
+.admin-input-wrap textarea {
+  padding: 0.65rem 0.85rem;
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  font-size: 0.88rem;
+  font-family: inherit;
+  background: #ffffff;
+  color: #111827;
+}
+
+.admin-input-wrap input:focus,
+.admin-input-wrap select:focus,
+.admin-input-wrap textarea:focus {
+  outline: none;
+  border-color: #111827;
+}
+
+.admin-img-preview-box {
+  width: 90px;
+  height: 90px;
+  border: 1px dashed var(--border-light);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8fafc;
+  overflow: hidden;
+  margin-top: 0.4rem;
+}
+
+.admin-img-preview-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Admin Gems Table & List */
+.admin-table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--border-card);
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.admin-gems-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  text-align: left;
+}
+
+.admin-gems-table th {
+  background: #f8fafc;
+  padding: 0.75rem 1rem;
+  font-weight: 700;
+  color: #475569;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.admin-gems-table td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--border-light);
+  color: #1e293b;
+  vertical-align: middle;
+}
+
+.admin-gems-table tr:hover {
+  background: #fcfdfe;
+}
+
+.admin-gem-thumb {
+  width: 44px;
+  height: 44px;
+  border-radius: 6px;
+  object-fit: cover;
+  border: 1px solid var(--border-light);
+}
+
+.status-tag {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.status-disponible {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-reservada {
+  background: #fef9c3;
+  color: #854d0e;
+}
+
+.status-vendida {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.btn-action-small {
+  padding: 0.35rem 0.65rem;
+  border-radius: 4px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid var(--border-light);
+  background: #ffffff;
+  color: #334155;
+  transition: all 0.15s;
+}
+
+.btn-action-small:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.btn-action-danger {
+  color: #dc2626;
+  border-color: #fecaca;
+}
+
+.btn-action-danger:hover {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+/* Logs Console Terminal */
+.admin-terminal-wrap {
+  background: #0f172a;
+  border-radius: 8px;
+  border: 1px solid #1e293b;
+  overflow: hidden;
+}
+
+.admin-terminal-header {
+  background: #1e293b;
+  padding: 0.65rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #94a3b8;
+  font-size: 0.8rem;
+  font-family: monospace;
+}
+
+.admin-terminal-body {
+  padding: 1rem;
+  max-height: 420px;
+  overflow-y: auto;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.82rem;
+  color: #e2e8f0;
+  line-height: 1.6;
+}
+
+.log-line {
+  margin-bottom: 0.4rem;
+  word-break: break-all;
+}
+
+.log-badge {
+  font-weight: 700;
+  padding: 0.1rem 0.4rem;
+  border-radius: 3px;
+  font-size: 0.72rem;
+  margin-right: 6px;
+}
+
+.log-INFO { background: #0369a1; color: #ffffff; }
+.log-SUCCESS { background: #15803d; color: #ffffff; }
+.log-WARN { background: #b45309; color: #ffffff; }
+.log-ERROR { background: #b91c1c; color: #ffffff; }
+
+/* ==========================================================================
+   LOGO EN ESQUINA PERMANENTE & BRAND HEADER LOGO
+   ========================================================================== */
+.brand-header-logo-img {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  object-fit: cover;
+  border: 1.5px solid #d4af37;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.floating-corner-logo {
+  position: fixed;
+  bottom: 1.75rem;
+  left: 1.75rem;
+  z-index: 1450;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #000000;
+  border: 2px solid #d4af37;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.floating-corner-logo:hover {
+  transform: scale(1.12);
+  box-shadow: 0 6px 22px rgba(212, 175, 55, 0.5);
+}
+
+.floating-corner-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (max-width: 600px) {
+  .floating-corner-logo {
+    bottom: 1.25rem;
+    left: 1.25rem;
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* ==========================================================================
+   PRÓXIMOS LIVES & TIKTOK VIDEOS
+   ========================================================================== */
+.section-proximos-lives {
+  padding: 4.5rem 0;
+  border-top: 1px solid var(--border-light);
+  background: var(--bg-white);
+}
+
+.live-stream-grid-clean {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.5rem;
+  align-items: center;
+  margin-bottom: 3.5rem;
+}
+
+@media (min-width: 900px) {
+  .live-stream-grid-clean {
+    grid-template-columns: 320px 1fr;
+    gap: 3.5rem;
+  }
+}
+
+.live-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.live-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: #fee2e2;
+  color: #991b1b;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  text-transform: uppercase;
+}
+
+.live-status-pill.now-live {
+  background: #ef4444;
+  color: #ffffff;
+  animation: pulse-live 1.5s infinite;
+}
+
+@keyframes pulse-live {
+  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+  70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+.live-date-highlight {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #f1f5f9;
+  color: #334155;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 0.35rem 0.85rem;
+  border-radius: 6px;
+  margin-bottom: 1.25rem;
+}
+
+/* Recommended TikTok Video Card */
+.tiktok-recommended-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-left: 4px solid #000000;
+  border-radius: 10px;
+  padding: 1.5rem 1.75rem;
+  margin-bottom: 3.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+@media (min-width: 768px) {
+  .tiktok-recommended-card {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.tiktok-rec-tag {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #d4af37;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.tiktok-rec-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0.2rem 0;
+}
+
+.tiktok-rec-desc {
+  font-size: 0.88rem;
+  color: #64748b;
+  margin: 0;
+}
+
+/* TikTok Published Videos Grid */
+.tiktok-published-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.tiktok-videos-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .tiktok-videos-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 900px) {
+  .tiktok-videos-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.tiktok-video-card {
+  background: var(--bg-white);
+  border: 1px solid var(--border-card);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.tiktok-video-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+  border-color: #cbd5e1;
+}
+
+.tiktok-thumb-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #0f172a;
+}
+
+.tiktok-thumb-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.85;
+  transition: transform 0.3s ease;
+}
+
+.tiktok-video-card:hover .tiktok-thumb-wrap img {
+  transform: scale(1.05);
+  opacity: 1;
+}
+
+.tiktok-play-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.tiktok-play-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.65);
+  border: 2px solid #ffffff;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tiktok-views-badge {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.75);
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+
+.tiktok-card-content {
+  padding: 1.15rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.tiktok-card-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.4;
+  margin-bottom: 0.4rem;
+}
+
+.tiktok-card-desc {
+  font-size: 0.82rem;
+  color: #64748b;
+  margin-bottom: 0.85rem;
+  line-height: 1.5;
+}
+
+.tiktok-card-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #0f172a;
+  text-decoration: none;
+  margin-top: auto;
+}
+
+.tiktok-card-btn:hover {
+  text-decoration: underline;
+}
+
+

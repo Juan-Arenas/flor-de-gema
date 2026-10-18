@@ -1,0 +1,9 @@
+{
+  "name": "flor-de-gema",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Flor De Gema - Joyería y Gemas Preciosas",
+  "dependencies": {
+    "@neondatabase/serverless": "^1.2.0"
+  }
+}
