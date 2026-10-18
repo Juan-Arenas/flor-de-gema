@@ -80,21 +80,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const academyModalOverlay = document.getElementById('academy-modal-overlay');
   const academyModalCloseBtn = document.getElementById('academy-modal-close-btn');
 
-  // Admin Elements
-  const adminLockBtn = document.getElementById('admin-lock-btn');
+  // Admin Elements (Inicializados de forma dinámica)
+  const adminLockBtn = document.getElementById('admin-lock-btn') || document.getElementById('header-admin-btn');
   const adminPasswordModal = document.getElementById('admin-password-modal');
-  const adminAuthCloseBtn = document.getElementById('admin-auth-close-btn');
-  const adminPinForm = document.getElementById('admin-pin-form');
-  const adminAuthError = document.getElementById('admin-auth-error');
-  const pinInputs = [
-    document.getElementById('admin-pin-1'),
-    document.getElementById('admin-pin-2'),
-    document.getElementById('admin-pin-3'),
-    document.getElementById('admin-pin-4')
-  ];
-
-  const adminPanelModal = document.getElementById('admin-panel-modal');
-  const adminPanelCloseBtn = document.getElementById('admin-panel-close-btn');
+  const adminPanelModal = document.getElementById('admin-panel');
   const adminLogoutBtn = document.getElementById('admin-logout-btn');
   const adminTabsNav = document.getElementById('admin-tabs-nav');
   const adminTabBtns = document.querySelectorAll('.admin-tab-btn');
@@ -1236,40 +1225,12 @@ Eslogan: "Flor De Gema, Invierte en belleza eterna"`;
       if (e.target === panel) window.closeAdminPanel();
     });
 
-    // 5. PIN Inputs Handling (Auto-tabbing & backspace tal cual Ventas Maquillaje)
-    const pinInputs = [
-      document.getElementById('admin-pin-input-1') || document.getElementById('admin-pin-1'),
-      document.getElementById('admin-pin-input-2') || document.getElementById('admin-pin-2'),
-      document.getElementById('admin-pin-input-3') || document.getElementById('admin-pin-3'),
-      document.getElementById('admin-pin-input-4') || document.getElementById('admin-pin-4')
-    ].filter(Boolean);
-
-    pinInputs.forEach((input, idx) => {
-      input.addEventListener('input', (e) => {
-        const val = e.target.value.replace(/\D/g, '');
-        e.target.value = val;
-        if (val && idx < pinInputs.length - 1) {
-          pinInputs[idx + 1].focus();
-        }
-        const enteredPin = pinInputs.map(i => i.value).join('');
-        if (enteredPin.length === 4) {
-          validateAndLoginAdmin(enteredPin);
-        }
-      });
-
-      input.addEventListener('keydown', (e) => {
-        if (e.key === 'Backspace' && !e.target.value && idx > 0) {
-          pinInputs[idx - 1].focus();
-        }
-      });
-    });
-
-    // Form submit PIN
+    // 5. PIN Inputs Handling & Auto-Login (Delegado a window.handleAdminPinSubmit)
+    window.validateAndLoginAdmin = validateAndLoginAdmin;
     const loginForm = document.getElementById('admin-login-form') || document.getElementById('admin-pin-form');
     loginForm?.addEventListener('submit', (e) => {
       e.preventDefault();
-      const enteredPin = pinInputs.map(i => i.value).join('').trim();
-      validateAndLoginAdmin(enteredPin);
+      window.handleAdminPinSubmit(e);
     });
 
     // 6. Tabs Navigation (Catálogo, Lives & TikTok, Base de Datos & Nube, Logs)
@@ -1600,22 +1561,37 @@ Eslogan: "Flor De Gema, Invierte en belleza eterna"`;
   // VALIDACIÓN Y LOGIN AL PANEL ADMIN
   // ========================================================================
   function validateAndLoginAdmin(enteredPin) {
+    if (!enteredPin) {
+      return window.handleAdminPinSubmit();
+    }
     const errorMsg = document.getElementById('admin-login-message') || document.getElementById('admin-auth-error');
-    if (errorMsg) errorMsg.textContent = '';
+    if (errorMsg) {
+      errorMsg.textContent = '';
+      errorMsg.style.color = '#dc2626';
+    }
 
     const validPin = localStorage.getItem('fdg_admin_pin') || ADMIN_PIN; // '1072'
 
     if (enteredPin === validPin || enteredPin === '1072') {
       sessionStorage.setItem('fdg_admin_token', '1072');
       sessionStorage.setItem('valen_admin_session_pin', '1072');
+      if (errorMsg) {
+        errorMsg.textContent = '✓ PIN Correcto. Accediendo al Panel...';
+        errorMsg.style.color = '#15803d';
+      }
       logValenEvent('OK', 'AUTH_LOGIN', 'Acceso autorizado al Panel de Administración Flor De Gema', {
         authMode: 'PIN_VERIFIED',
         user: 'admin'
       }, 'OK');
 
-      window.openAdminPanel();
+      setTimeout(() => {
+        window.openAdminPanel();
+      }, 80);
     } else {
-      if (errorMsg) errorMsg.textContent = 'PIN incorrecto. Intenta de nuevo.';
+      if (errorMsg) {
+        errorMsg.textContent = 'PIN incorrecto. Intenta de nuevo.';
+        errorMsg.style.color = '#dc2626';
+      }
       logValenEvent('FAILED', 'AUTH_LOGIN', 'Intento de acceso denegado: PIN incorrecto', {
         enteredDigits: enteredPin.length
       }, 'FAILED');
@@ -1625,9 +1601,13 @@ Eslogan: "Flor De Gema, Invierte en belleza eterna"`;
         if (inp) inp.value = '';
       }
       const first = document.getElementById('admin-pin-input-1') || document.getElementById('admin-pin-1');
-      first?.focus();
+      if (first) {
+        first.focus();
+        if (typeof first.select === 'function') first.select();
+      }
     }
   }
+  window.validateAndLoginAdmin = validateAndLoginAdmin;
 
   // Cargar y sincronizar datos del panel
   window.loadAdminData = function() {
