@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flor De Gema | Piedras Preciosas y Semipreciosas | Invierte en belleza eterna</title>
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Flor De Gema - Especialistas en esmeraldas colombianas, zafiros, rubíes y gemas preciosas certificadas. Invierte en belleza eterna con asesoría gemológica personalizada.">
+  <meta name="keywords" content="Flor De Gema, esmeraldas colombianas, zafiros, rubies, piedras preciosas, gemas naturales, gemologia, Muzo, Chivor, joyas finas, inversion en gemas">
+  <meta name="author" content="Flor De Gema">
+  
+  <!-- OpenGraph Social Tags -->
+  <meta property="og:title" content="Flor De Gema | Invierte en belleza eterna">
+  <meta property="og:description" content="Descubre gemas naturales de alta gama seleccionadas por su belleza, color y carácter único con reporte gemológico oficial.">
+  <meta property="og:image" content="assets/images/hero-gemstones.jpg">
+  <meta property="og:type" content="website">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/webp" href="logo.webp">
+  <link rel="apple-touch-icon" href="logo.webp">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Top Announcement Bar (Live TikTok / Instagram) -->
+  <div class="top-announcement">
+    <span>
+      <span class="badge-live">🔴 EN VIVO</span>
+      Transmisiones en vivo con lotes exclusivos en TikTok 
+      <a href="https://tiktok.com/@flor.de.gema" target="_blank" rel="noopener">@flor.de.gema</a> 
+      e Instagram 
+      <a href="https://instagram.com/flordegema.s" target="_blank" rel="noopener">@flordegema.s</a>
+    </span>
+  </div>
+
+  <!-- Header Navigation -->
+  <header class="main-header">
+    <div class="container header-container">
+      <!-- Brand Logo & Name -->
+      <a href="#inicio" class="brand-wrapper">
+        <img src="logo.webp" alt="Flor De Gema Logo" class="brand-logo-img">
+        <div class="brand-text-block">
+          <span class="brand-title">FLOR DE GEMA</span>
+          <span class="brand-slogan-sub">Invierte en belleza eterna</span>
+        </div>
+      </a>
+
+      <!-- Desktop Navigation Menu -->
+      <nav>
+        <ul class="nav-menu">
+          <li><a href="#inicio" class="nav-link active">Inicio</a></li>
+          <li><a href="#categorias" class="nav-link">Gemas</a></li>
+          <li><a href="#catalogo" class="nav-link">Colecciones</a></li>
+          <li><a href="#fichas-tecnicas" class="nav-link">Guía Gemológica</a></li>
+          <li><a href="#academia" class="nav-link">Academia</a></li>
+          <li><a href="#en-vivo" class="nav-link">Preventas & Live</a></li>
+          <li><a href="#nosotros" class="nav-link">Nosotros</a></li>
+          <li><a href="#contacto" class="nav-link">Contacto</a></li>
+        </ul>
+      </nav>
+
+      <!-- Action Icons -->
+      <div class="header-actions">
+        <!-- Search Trigger -->
+        <a href="#catalogo" class="action-btn" title="Buscar gemas" onclick="document.getElementById('search-gems-input')?.focus()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </a>
+
+        <!-- Wishlist / Selection Bag -->
+        <button class="action-btn" title="Mis Gemas Guardadas" onclick="openWishlist()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+          </svg>
+          <span class="badge-counter" id="wishlist-counter" style="display: none;">0</span>
+        </button>
+
+        <!-- WhatsApp Quick Chat -->
+        <a href="https://wa.me/573016256746?text=Hola%20Flor%20De%20Gema,%20deseo%20asesor%C3%ADa%20personalizada%20en%20gemas" target="_blank" rel="noopener" class="action-btn" title="WhatsApp 301 625 6746" style="color: #25d366;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.007c.107.005.249-.041.39.296.144.347.491 1.2.534 1.288.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86.174.086.275.072.376-.044.102-.115.433-.506.549-.68.116-.173.231-.144.39-.086s1.011.477 1.184.564c.173.086.289.13.332.202.043.072.043.419-.101.824z"/>
+          </svg>
+        </a>
+
+        <!-- Mobile Hamburger Toggle -->
+        <button class="action-btn mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Abrir Menú">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Drawer -->
+  <div class="drawer-overlay" id="mobile-drawer-overlay"></div>
+  <aside class="mobile-nav-drawer" id="mobile-nav-drawer">
+    <div class="mobile-drawer-header">
+      <div class="brand-wrapper">
+        <img src="logo.webp" alt="Flor De Gema" style="width: 38px; height: 38px;">
+        <span class="brand-title" style="font-size: 1.15rem;">FLOR DE GEMA</span>
+      </div>
+      <button class="action-btn" id="mobile-drawer-close">✕</button>
+    </div>
+    <ul class="mobile-nav-links">
+      <li><a href="#inicio" class="mobile-nav-link">Inicio <span>→</span></a></li>
+      <li><a href="#categorias" class="mobile-nav-link">Explora por Tipo de Gema <span>→</span></a></li>
+      <li><a href="#catalogo" class="mobile-nav-link">Catálogo Completo <span>→</span></a></li>
+      <li><a href="#fichas-tecnicas" class="mobile-nav-link">Fichas Técnicas & Reportes <span>→</span></a></li>
+      <li><a href="#academia" class="mobile-nav-link">Academia Gemológica <span>→</span></a></li>
+      <li><a href="#en-vivo" class="mobile-nav-link">Gemas Exclusivas & En Vivos <span>→</span></a></li>
+      <li><a href="#nosotros" class="mobile-nav-link">Nuestra Historia <span>→</span></a></li>
+      <li><a href="#contacto" class="mobile-nav-link">Contacto & WhatsApp <span>→</span></a></li>
+    </ul>
+    <div style="margin-top: auto; padding-top: 1.5rem; border-top: 1px solid var(--border-light);">
+      <a href="https://wa.me/573016256746" target="_blank" rel="noopener" class="btn-primary" style="width: 100%; justify-content: center;">
+        WhatsApp 301 625 6746
+      </a>
+    </div>
+  </aside>
+
+  <!-- Wishlist Drawer -->
+  <div class="drawer-overlay" id="wishlist-drawer-overlay" onclick="closeWishlist()"></div>
+  <aside class="wishlist-drawer" id="wishlist-drawer">
+    <div class="drawer-header">
+      <h3>Gemas Seleccionadas</h3>
+      <button class="action-btn" onclick="closeWishlist()">✕</button>
+    </div>
+    <div class="drawer-body" id="wishlist-drawer-body">
+      <!-- Items dynamically injected -->
+    </div>
+    <div class="drawer-footer">
+      <button class="btn-primary" id="send-wishlist-wa-btn" style="width: 100%; justify-content: center; gap: 0.6rem;">
+        <span>💬</span> Cotizar Selección por WhatsApp
+      </button>
+    </div>
+  </aside>
+
+  <!-- =======================================================================
+       1. SECCIÓN INICIO (HERO IMPACTANTE & BIENVENIDA)
+       ======================================================================= -->
+  <section class="hero-section" id="inicio">
+    <div class="container">
+      <div class="hero-content">
+        <span class="hero-subtag">PIEDRAS PRECIOSAS Y SEMIPRECIOSAS</span>
+        <h1 class="hero-title">La belleza de lo extraordinario</h1>
+        <p class="hero-description">
+          Descubre gemas seleccionadas por su belleza, color y carácter único. 
+          Cada piedra cuenta una historia geológica milenaria.
+        </p>
+
+        <div class="hero-buttons">
+          <a href="#catalogo" class="btn-primary">
+            <span>EXPLORAR COLECCIÓN</span>
+          </a>
+          <a href="https://wa.me/573016256746?text=Hola%20Flor%20De%20Gema,%20deseo%20conocer%20las%20gemas%20disponibles" target="_blank" rel="noopener" class="btn-whatsapp-outline">
+            <span>💬</span> CONSULTAR POR WHATSAPP
+          </a>
+        </div>
+      </div>
+
+      <!-- Hero Photograph Showcase (Identical to user's reference image 1) -->
+      <div class="hero-image-wrapper">
+        <img src="assets/images/hero-gemstones.jpg" alt="Flor De Gema - Selección de Piedras Preciosas y Semipreciosas">
+        <div class="hero-overlay-tag" title="Flor De Gema Master Collection">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+          </svg>
+        </div>
+      </div>
+      <p class="hero-caption-note">
+        <em>"Flor De Gema, Invierte en belleza eterna"</em> · Ejemplares 100% naturales con reporte gemológico.
+      </p>
+
+      <!-- Trust Strip -->
+      <div class="trust-strip">
+        <div class="trust-grid">
+          <div class="trust-item">
+            <div class="trust-icon">💎</div>
+            <div class="trust-text">
+              <h4>Gemas 100% Naturales</h4>
+              <p>Autenticidad garantizada de por vida.</p>
+            </div>
+          </div>
+          <div class="trust-item">
+            <div class="trust-icon">📜</div>
+            <div class="trust-text">
+              <h4>Reportes Gemológicos</h4>
+              <p>Certificados CDTEC, GIA y laboratorios oficiales.</p>
+            </div>
+          </div>
+          <div class="trust-item">
+            <div class="trust-icon">🔒</div>
+            <div class="trust-text">
+              <h4>Envíos Asegurados</h4>
+              <p>Cobertura de valores nacional e internacional.</p>
+            </div>
+          </div>
+          <div class="trust-item">
+            <div class="trust-icon">👑</div>
+            <div class="trust-text">
+              <h4>Asesoría Directa</h4>
+              <p>Atención uno a uno con expertos gemólogos.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =======================================================================
+       2. EXPLORA POR TIPO DE GEMA (CATEGORÍAS VISUALES)
+       ======================================================================= -->
+  <section class="categories-section" id="categorias">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">Categorías Principales</span>
+        <h2 class="section-title">Explora por tipo de gema</h2>
+        <p class="section-subtitle">
+          Navega entre nuestras variedades más solicitadas: desde esmeraldas de Muzo y Chivor hasta zafiros y rubíes de coleccionista.
+        </p>
+      </div>
+
+      <div class="category-cards-grid">
+        <!-- Zafiros -->
+        <div class="category-card" data-category="zafiros">
+          <div class="category-card-img-wrap">
+            <img src="assets/images/sapphire-gem.jpg" alt="Zafiros Ceilán">
+          </div>
+          <div class="category-card-info">
+            <h3 class="category-card-title">Zafiros</h3>
+            <span class="category-card-tag">Ceilán & Madagascar</span>
+          </div>
+        </div>
+
+        <!-- Esmeraldas -->
+        <div class="category-card" data-category="esmeraldas">
+          <div class="category-card-img-wrap">
+            <img src="assets/images/emerald-gem.jpg" alt="Esmeraldas Colombianas">
+          </div>
+          <div class="category-card-info">
+            <h3 class="category-card-title">Esmeraldas</h3>
+            <span class="category-card-tag">Muzo & Chivor</span>
+          </div>
+        </div>
+
+        <!-- Rubíes -->
+        <div class="category-card" data-category="rubies">
+          <div class="category-card-img-wrap">
+            <img src="assets/images/ruby-gem.jpg" alt="Rubíes Sangre de Pichón">
+          </div>
+          <div class="category-card-info">
+            <h3 class="category-card-title">Rubíes</h3>
+            <span class="category-card-tag">Pigeon Blood</span>
+          </div>
+        </div>
+
+        <!-- Gemas de Colección / Turmalinas -->
+        <div class="category-card" data-category="turmalinas">
+          <div class="category-card-img-wrap">
+            <img src="assets/images/gem-collection.jpg" alt="Turmalinas y Gemas Exóticas">
+          </div>
+          <div class="category-card-info">
+            <h3 class="category-card-title">Turmalinas & Exóticas</h3>
+            <span class="category-card-tag">Colores Raros</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================================================================
+           ESPACIO 1 PARA FLYER PROMOCIONAL (BANNER INTERMEDIO DE FLYER)
+           =================================================================== -->
+      <div class="flyer-slot-wrapper">
+        <div class="flyer-card-banner">
+          <div class="flyer-content-col">
+            <div class="flyer-indicator-badge">
+              <span>🖼️</span> ESPACIO PARA FLYER / BANNER PROMOCIONAL #1
+            </div>
+            <h3>Lanzamientos Semanales & Lotes Nuevos</h3>
+            <p>
+              Aquí va tu flyer de temporada o novedades. Los usuarios pueden ver promociones especiales, 
+              lanzamientos exclusivos de minas o invitaciones personalizadas.
+            </p>
+            <span class="flyer-dimensions-pill">📐 Formato sugerido: WebP / PNG · 1920x600 px (Desktop) / 1080x800 px (Mobile)</span>
+          </div>
+          <div>
+            <a href="https://wa.me/573016256746?text=Hola%20Flor%20De%20Gema,%20quiero%20conocer%20el%20lote%20nuevo" target="_blank" rel="noopener" class="btn-primary">
+              Consultar Lotes Nuevos
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =======================================================================
+       2B. CATÁLOGO DE GEMAS COMPLETO & INTERACTIVO
+       ======================================================================= -->
+  <section class="catalog-section" id="catalogo">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">Inventario Activo</span>
+        <h2 class="section-title">Catálogo de Gemas Exclusivas</h2>
+        <p class="section-subtitle">
+          Cada piedra es única y posee su propia ficha técnica verificada. Filtra por categoría, busca por características o aparta directamente vía WhatsApp.
+        </p>
+      </div>
+
+      <!-- Search & Controls Bar -->
+      <div class="catalog-controls">
+        <div class="catalog-top-row">
+          <div class="search-box-wrapper">
+            <span class="search-icon-inside">🔍</span>
+            <input type="text" id="search-gems-input" placeholder="Buscar por gema, origen (Muzo, Ceilán), talla o referencia...">
+          </div>
+
+          <div class="sort-select-wrapper">
+            <select id="sort-gems-select">
+              <option value="featured">✨ Destacadas Flor De Gema</option>
+              <option value="carats-high">💎 Mayor Peso en Quilates</option>
+              <option value="price-low">💵 Precio: Menor a Mayor</option>
+              <option value="price-high">👑 Precio: Mayor a Menor</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Category Pills Filter -->
+        <div class="filter-pills-row" id="filter-pills-container">
+          <!-- Injected via app.js -->
+        </div>
+      </div>
+
+      <!-- Gemstones Grid -->
+      <div class="gem-catalog-grid" id="catalog-grid">
+        <!-- Injected via app.js -->
+      </div>
+    </div>
+  </section>
+
+  <!-- =======================================================================
+       3. FICHAS TÉCNICAS Y REPORTES GEMOLÓGICOS (INFORMACIÓN & BANNER)
+       ======================================================================= -->
+  <section class="fichas-section" id="fichas-tecnicas" style="padding: 4.5rem 0; background: var(--bg-surface); border-top: 1px solid var(--border-light);">
+    <div class="container">
+      <div class="about-grid">
+        <div class="live-flyer-frame" style="border-color: var(--border-medium);">
+          <img src="assets/images/gem-lab.jpg" alt="Laboratorio Gemológico y Certificados Flor De Gema">
+          <div class="live-flyer-label">
+            <span style="font-size: 0.82rem; font-weight: 700; color: #fff;">🔬 Control de Calidad Microscópico</span>
+            <span style="font-size: 0.75rem; color: var(--gold-light);">Normas CIBJO / GIA</span>
+          </div>
+        </div>
+
+        <div class="about-text">
+          <span class="section-label">Transparencia & Ciencia</span>
+          <h2>Fichas Técnicas Rigurosas y Reportes Gemológicos</h2>
+          <p>
+            En <strong>Flor De Gema</strong>, no vendemos promesas: vendemos certidumbre física y química. 
+            Cada una de nuestras piezas cuenta con un análisis exhaustivo de sus parámetros fundamentales:
+          </p>
+          
+          <div class="about-highlights" style="grid-template-columns: 1fr 1fr; margin-top: 1.5rem;">
+            <div class="highlight-box">
+              <h4>⚖️ Quilates & Medidas</h4>
+              <p>Pesaje en balanzas gemológicas calibradas y medidas en centésimas de milímetro.</p>
+            </div>
+            <div class="highlight-box">
+              <h4>🔬 Tratamientos Revelados</h4>
+              <p>Declaración honesta de tratamientos conocidos según estándares de laboratorios internacionales.</p>
+            </div>
+            <div class="highlight-box">
+              <h4>🗺️ Origen Documentado</h4>
+              <p>Trazabilidad desde las minas de origen: Boyacá (Muzo, Chivor), Sri Lanka, Brasil y África.</p>
+            </div>
+            <div class="highlight-box">
+              <h4>📜 Dictamen Oficial</h4>
+              <p>Certificados emitidos por CDTEC, GIA, GRS o nuestro laboratorio de verificación.</p>
+            </div>
+          </div>
+
+          <div style="margin-top: 2rem;">
+            <a href="https://wa.me/573016256746?text=Hola%20Flor%20De%20Gema,%20deseo%20validar%20el%20reporte%20gemol%C3%B3gico%20de%20una%20pieza" target="_blank" rel="noopener" class="btn-primary">
+              Validar Certificado con un Experto
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =======================================================================
+       4. ACADEMIA GEMOLÓGICA (ARTÍCULOS EDUCATIVOS & SEO)
+       ======================================================================= -->
+  <section class="academy-section" id="academia">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">Conocimiento para Inversionistas</span>
+        <h2 class="section-title">Academia Gemológica Flor De Gema</h2>
+        <p class="section-subtitle">
+          Artículos para aprender a diferenciar gemas, entender tratamientos, conocer procedencias geográficas y comprender reportes de laboratorio.
+        </p>
+      </div>
+
+      <div class="academy-grid" id="academy-grid">
+        <!-- Injected via app.js -->
+      </div>
+    </div>
+  </section>
+
+  <!-- =======================================================================
+       5. GEMAS EXCLUSIVAS, PREVENTAS Y TRANSMISIONES EN VIVO
+       ======================================================================= -->
+  <section class="live-stream-section" id="en-vivo">
+    <div class="container">
+      <div class="live-stream-container">
+        <!-- Flyer Frame for Live Events -->
+        <div class="live-flyer-frame">
+          <img src="assets/images/flyer-live-gemas.jpg" alt="Flyer Próxima Transmisión en Vivo Flor De Gema">
+          <div class="live-flyer-label">
+            <div>
+              <div style="font-weight: 700; color: #fff; font-size: 0.85rem;">Próximo Live Shopping</div>
+              <div style="font-size: 0.75rem; color: var(--gold-light);">Lotes con Precios Especiales</div>
+            </div>
+            <span class="live-badge-glow" style="margin-bottom: 0;">🔴 EN DIRECTO</span>
+          </div>
+        </div>
+
+        <!-- Live Info & Countdown Panel -->
+        <div class="live-info-panel">
+          <span class="live-badge-glow">EXCLUSIVO EN VIVO</span>
+          <h2>Gemas Exclusivas, Preventas y Transmisiones</h2>
+          <p style="color: var(--text-secondary); font-size: 1.05rem; line-height: 1.7;">
+            Participa en nuestras transmisiones en vivo a través de <strong>TikTok</strong> e <strong>Instagram</strong>. 
+            Presentamos colecciones limitadas, nuevos lotes recién salidos de talla y piezas de museo que puedes apartar en tiempo real.
+          </p>
+
+          <div class="countdown-box">
+            <div class="countdown-item">
+              <div class="countdown-number" id="countdown-days">04</div>
+              <div class="countdown-label">Días</div>
+            </div>
+            <div class="countdown-item">
+              <div class="countdown-number" id="countdown-hours">18</div>
+              <div class="countdown-label">Horas</div>
+            </div>
+            <div class="countdown-item">
+              <div class="countdown-number" id="countdown-minutes">42</div>
+              <div class="countdown-label">Min</div>
+            </div>
+            <div class="countdown-item">
+              <div class="countdown-number" id="countdown-seconds">30</div>
+              <div class="countdown-label">Seg</div>
+            </div>
+          </div>
+
+          <p style="font-size: 0.88rem; color: var(--text-gold); font-weight: 600;">
+            📅 Horario habitual de Live: Jueves y Domingos 7:00 PM (Hora Colombia).
+          </p>
+
+          <div class="social-live-buttons">
+            <a href="https://tiktok.com/@flor.de.gema" target="_blank" rel="noopener" class="btn-tiktok">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.24 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/>
+              </svg>
+              <span>Seguir en TikTok: @flor.de.gema</span>
+            </a>
+
+            <a href="https://instagram.com/flordegema.s" target="_blank" rel="noopener" class="btn-instagram">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+              </svg>
+              <span>Instagram: @flordegema.s</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =======================================================================
+       6. NUESTRA HISTORIA, VALORES Y CONTACTO OFICIAL
+       ======================================================================= -->
+  <section class="about-section" id="nosotros">
+    <div class="container">
+      <div class="about-grid">
+        <!-- Brand Story Column -->
+        <div class="about-text">
+          <span class="section-label">Nuestra Esencia</span>
+          <h2>Flor De Gema: Pasión y Rigor por lo Auténtico</h2>
+          <p>
+            Nacimos con la convicción de que las piedras preciosas no son simples adornos, 
+            sino cápsulas del tiempo geológico e inversiones patrimoniales que trascienden generaciones.
+          </p>
+          <p>
+            Nuestro lema, <strong>"Flor De Gema, Invierte en belleza eterna"</strong>, resume nuestro compromiso: 
+            ofrecer a coleccionistas, joyeros e inversionistas acceso directo a gemas extraídas éticamente, 
+            talladas con maestría y certificadas con absoluto rigor científico.
+          </p>
+
+          <div class="about-highlights">
+            <div class="highlight-box">
+              <h4>💎 Selección Directa</h4>
+              <p>Relaciones directas con mineros y cortadores en Boyacá y plazas internacionales.</p>
+            </div>
+            <div class="highlight-box">
+              <h4>🤝 Ética & Transparencia</h4>
+              <p>Claridad total en pesos, medidas, tratamientos y valor real de mercado.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact & Concierge Form -->
+        <div class="contact-card-box" id="contacto">
+          <h3>Asesoría & Solicitudes VIP</h3>
+          <p>¿Buscas una gema con quilataje, corte o presupuesto específico? Déjanos tus datos y un gemólogo se comunicará contigo.</p>
+
+          <form id="custom-quote-form">
+            <div class="form-group">
+              <label for="quote-name">Nombre y Apellidos</label>
+              <input type="text" id="quote-name" required placeholder="Ej. Juan Arenas">
+            </div>
+
+            <div class="form-group">
+              <label for="quote-gem-type">Gema o Variedad de Interés</label>
+              <select id="quote-gem-type">
+                <option value="Esmeralda Colombiana (Muzo/Chivor)">Esmeralda Colombiana (Muzo / Chivor)</option>
+                <option value="Zafiro Real (Ceilán)">Zafiro Real (Ceilán / Madagascar)</option>
+                <option value="Rubí Sangre de Pichón">Rubí Sangre de Pichón</option>
+                <option value="Turmalina Paraíba / Exótica">Turmalina Paraíba / Exótica</option>
+                <option value="Lote para Joyería / Inversión">Lote para Joyería / Inversión</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="quote-budget">Rango de Presupuesto Estimado</label>
+              <input type="text" id="quote-budget" placeholder="Ej. 10 a 20 Millones COP / 3,000 USD">
+            </div>
+
+            <div class="form-group">
+              <label for="quote-msg">Detalles adicionales o requerimiento de talla</label>
+              <textarea id="quote-msg" rows="3" placeholder="Quilates deseados, forma (octagonal, oval), uso para anillo de compromiso, etc."></textarea>
+            </div>
+
+            <button type="submit" class="btn-primary" style="width: 100%; justify-content: center;">
+              <span>💬</span> Enviar Solicitud por WhatsApp
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =======================================================================
+       PREGUNTAS FRECUENTES (FAQ & POLÍTICAS DE ENVÍO / GARANTÍA)
+       ======================================================================= -->
+  <section class="faq-section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">Condiciones de Compra</span>
+        <h2 class="section-title">Preguntas Frecuentes & Envíos</h2>
+      </div>
+
+      <div class="faq-list">
+        <div class="faq-item">
+          <button class="faq-question">
+            <span>¿Cómo se realizan los envíos y están asegurados?</span>
+            <span>+</span>
+          </button>
+          <div class="faq-answer">
+            Todos nuestros envíos viajan 100% asegurados con transportadoras de valores certificadas tanto a nivel nacional (Servientrega Asegurado / Envía Valores) como a nivel internacional (DHL Express / FedEx Priority). Cada paquete viaja en caja precintada de seguridad y con seguro de pérdida total.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">
+            <span>¿Todas las gemas incluyen certificado gemológico?</span>
+            <span>+</span>
+          </button>
+          <div class="faq-answer">
+            Sí. Cada gema de Flor De Gema cuenta con su respectiva ficha técnica y reporte emitido por entidades reconocidas como CDTEC (para esmeraldas colombianas), GIA o nuestro laboratorio gemológico de autenticidad garantizada de por vida.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">
+            <span>¿Cuáles son los medios de pago aceptados?</span>
+            <span>+</span>
+          </button>
+          <div class="faq-answer">
+            Aceptamos transferencias bancarias en Colombia (Bancolombia, Davivienda), transferencias internacionales vía SWIFT / Wise, tarjetas de crédito mediante pasarela segura, y pagos en criptoactivos estables (USDT).
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">
+            <span>¿Cuál es la política de satisfacción y cambios?</span>
+            <span>+</span>
+          </button>
+          <div class="faq-answer">
+            Al recibir tu gema, dispones de 5 días hábiles para examinarla con tu gemólogo o joyero de confianza con el sello de seguridad intacto. Si no cumple exactamente con la descripción técnica, garantizamos el cambio o devolución completa de tu dinero.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =======================================================================
+       FOOTER
+       ======================================================================= -->
+  <footer class="main-footer">
+    <div class="container">
+      <div class="footer-top-grid">
+        <!-- Brand & Slogan -->
+        <div class="footer-brand-col">
+          <div class="brand-wrapper">
+            <img src="logo.webp" alt="Flor De Gema" style="width: 42px; height: 42px;">
+            <div class="brand-text-block">
+              <span class="brand-title">FLOR DE GEMA</span>
+              <span class="brand-slogan-sub">Invierte en belleza eterna</span>
+            </div>
+          </div>
+          <p>
+            Venta especializada de esmeraldas colombianas, zafiros, rubíes y gemas preciosas naturales con respaldo gemológico.
+          </p>
+
+          <!-- Social Links Row -->
+          <div class="social-links-row">
+            <!-- WhatsApp -->
+            <a href="https://wa.me/573016256746" target="_blank" rel="noopener" class="social-icon-circle" title="WhatsApp 3016256746">
+              💬
+            </a>
+            <!-- Instagram -->
+            <a href="https://instagram.com/flordegema.s" target="_blank" rel="noopener" class="social-icon-circle" title="Instagram @flordegema.s">
+              📸
+            </a>
+            <!-- TikTok -->
+            <a href="https://tiktok.com/@flor.de.gema" target="_blank" rel="noopener" class="social-icon-circle" title="TikTok @flor.de.gema">
+              🎵
+            </a>
+            <!-- Facebook -->
+            <a href="https://facebook.com/flordegema" target="_blank" rel="noopener" class="social-icon-circle" title="Facebook Flor De Gema">
+              👥
+            </a>
+          </div>
+        </div>
+
+        <!-- Col 2: Secciones -->
+        <div class="footer-col">
+          <h4>Navegación</h4>
+          <ul>
+            <li><a href="#inicio">Inicio</a></li>
+            <li><a href="#categorias">Tipos de Gema</a></li>
+            <li><a href="#catalogo">Catálogo Completo</a></li>
+            <li><a href="#fichas-tecnicas">Fichas Técnicas</a></li>
+            <li><a href="#academia">Academia Gemológica</a></li>
+            <li><a href="#en-vivo">Preventas & Lives</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 3: Gemas -->
+        <div class="footer-col">
+          <h4>Colecciones</h4>
+          <ul>
+            <li><a href="#catalogo">Esmeraldas de Muzo</a></li>
+            <li><a href="#catalogo">Esmeraldas de Chivor</a></li>
+            <li><a href="#catalogo">Zafiros de Ceilán</a></li>
+            <li><a href="#catalogo">Rubíes Sangre de Pichón</a></li>
+            <li><a href="#catalogo">Turmalinas Paraíba</a></li>
+            <li><a href="#catalogo">Lotes de Colección</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 4: Contacto Oficial -->
+        <div class="footer-col">
+          <h4>Contacto Oficial</h4>
+          <ul>
+            <li>📱 WhatsApp: <a href="https://wa.me/573016256746" target="_blank" rel="noopener"><strong>301 625 6746</strong></a></li>
+            <li>📸 Instagram: <a href="https://instagram.com/flordegema.s" target="_blank" rel="noopener"><strong>@flordegema.s</strong></a></li>
+            <li>🎵 TikTok: <a href="https://tiktok.com/@flor.de.gema" target="_blank" rel="noopener"><strong>@flor.de.gema</strong></a></li>
+            <li>👥 Facebook: <strong>Flor De Gema</strong></li>
+            <li>🌐 Dominio: <strong>flordegema.com</strong></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom-bar">
+        <div>
+          © 2026 <strong>Flor De Gema</strong>. Todos los derechos reservados. <em>"Invierte en belleza eterna"</em>.
+        </div>
+        <div>
+          flordegema.com · Bogotá & Boyacá, Colombia
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- =======================================================================
+       MODAL 1: FICHA TÉCNICA Y REPORTE DETALLADO DE GEMA
+       ======================================================================= -->
+  <div class="modal-overlay" id="tech-modal-overlay">
+    <div class="modal-dialog">
+      <button class="modal-close-btn" id="tech-modal-close-btn">✕</button>
+      <div id="tech-modal-content">
+        <!-- Content injected dynamically via app.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       MODAL 2: ARTÍCULO COMPLETO ACADEMIA GEMOLÓGICA
+       ======================================================================= -->
+  <div class="modal-overlay" id="academy-modal-overlay">
+    <div class="modal-dialog" style="max-width: 800px;">
+      <button class="modal-close-btn" id="academy-modal-close-btn">✕</button>
+      <div id="academy-modal-content">
+        <!-- Content injected dynamically via app.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       FLOATING CONCIERGE WHATSAPP BUTTON (ALWAYS ACCESSIBLE)
+       ======================================================================= -->
+  <a href="https://wa.me/573016256746?text=Hola%20Flor%20De%20Gema,%20deseo%20asesor%C3%ADa%20personalizada%20con%20un%20gem%C3%B3logo" 
+     target="_blank" 
+     rel="noopener" 
+     class="floating-wa-btn" 
+     aria-label="Atención VIP WhatsApp">
+    💬
+    <span class="floating-wa-tooltip">Asesoría Gemológica VIP (301 625 6746)</span>
+  </a>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
