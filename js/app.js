@@ -3,7 +3,34 @@
 // Eslogan: "Flor De Gema, Invierte en belleza eterna"
 // ==========================================================================
 
+// Global Utility Functions (Available immediately across all scripts)
+window.formatCOP = window.formatCOP || function(value) {
+  const num = Number(value) || 0;
+  return '$ ' + num.toLocaleString('es-CO', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+};
+var formatCOP = window.formatCOP;
+
+window.formatUSD = window.formatUSD || function(value) {
+  const num = Number(value) || 0;
+  return '$' + num.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+};
+var formatUSD = window.formatUSD;
+
+window.normalizeCategorySlug = window.normalizeCategorySlug || function(name) {
+  if (!name) return 'esmeraldas';
+  return String(name)
+    .toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '') || 'esmeraldas';
+};
+var normalizeCategorySlug = window.normalizeCategorySlug;
+
 document.addEventListener('DOMContentLoaded', () => {
+  const formatCOP = (val) => (typeof window.formatCOP === 'function' ? window.formatCOP(val) : '$ ' + (Number(val) || 0).toLocaleString('es-CO'));
+  const formatUSD = (val) => (typeof window.formatUSD === 'function' ? window.formatUSD(val) : '$' + (Number(val) || 0).toLocaleString('en-US'));
+  const normalizeCategorySlug = (val) => (typeof window.normalizeCategorySlug === 'function' ? window.normalizeCategorySlug(val) : String(val || 'esmeraldas').toLowerCase());
+
   // ------------------------------------------------------------------------
   // 1. ESTADO GLOBAL DE LA APLICACIÓN
   // ------------------------------------------------------------------------
@@ -912,7 +939,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   window.inquireGem = inquireGem;
 
-  function recordWhatsAppInquiry(clientName, phone, gemName, priceCOP) {
+  function recordWhatsAppInquiry(clientName, phone, gemName, priceCOP, status = 'Cotizado') {
     const pad = (n) => String(n).padStart(2, '0');
     const now = new Date();
     const dateFormatted = `${pad(now.getDate())}/${pad(now.getMonth() + 1)}/${now.getFullYear()} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
@@ -923,15 +950,17 @@ document.addEventListener('DOMContentLoaded', () => {
       phone: phone || '+57 301 625 6746',
       gemName: gemName || 'Piedra Preciosa',
       priceCOP: priceCOP || 0,
-      status: 'Cotizado',
-      notes: 'Consulta generada directamente desde la tienda online.'
+      status: status || 'Cotizado',
+      notes: 'Consulta o pedido registrado en Flor De Gema.'
     };
     ordersList.unshift(newOrder);
     try {
       localStorage.setItem('fdg_orders_history', JSON.stringify(ordersList));
     } catch (_) {}
     renderAdminOrdersTable();
+    updateAdminStats();
   }
+  window.recordWhatsAppInquiry = recordWhatsAppInquiry;
 
   // ------------------------------------------------------------------------
   // 7. GUÍA GEMOLÓGICA (ACADEMIA)
@@ -1909,29 +1938,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const productCancelBtn = document.getElementById('admin-product-cancel');
     const productForm = document.getElementById('admin-product-form');
 
-    productToggleBtn?.addEventListener('click', () => {
-      if (!productPanel) return;
-      const isHidden = productPanel.style.display === 'none' || productPanel.classList.contains('hidden');
-      if (isHidden) {
-        productPanel.style.display = 'block';
-        productPanel.classList.remove('hidden');
-        productToggleBtn.innerHTML = '<i class="fas fa-chevron-up"></i> Cerrar Formulario';
-        document.getElementById('admin-product-name')?.focus();
-      } else {
-        productPanel.style.display = 'none';
-        productPanel.classList.add('hidden');
-        productToggleBtn.innerHTML = '<i class="fas fa-plus"></i> Abrir Formulario';
-      }
-    });
+    if (productToggleBtn) {
+      productToggleBtn.onclick = (e) => {
+        if (e && typeof e.preventDefault === 'function') e.preventDefault();
+        window.toggleAdminProductForm(e);
+      };
+    }
 
-    productCancelBtn?.addEventListener('click', () => {
-      resetAdminProductForm();
-      if (productPanel) {
-        productPanel.style.display = 'none';
-        productPanel.classList.add('hidden');
-      }
-      if (productToggleBtn) productToggleBtn.innerHTML = '<i class="fas fa-plus"></i> Abrir Formulario';
-    });
+    if (productCancelBtn) {
+      productCancelBtn.onclick = (e) => {
+        if (e && typeof e.preventDefault === 'function') e.preventDefault();
+        resetAdminProductForm();
+        window.closeAdminProductForm();
+      };
+    }
 
     // D. Gestor de Fotos: Subir múltiples fotos locales
     const photosFileInput = document.getElementById('admin-product-images-file');
@@ -2060,16 +2080,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.getElementById('btn-add-order-manual')?.addEventListener('click', () => {
-      const client = prompt('Nombre del cliente:');
-      if (!client) return;
-      const phone = prompt('Teléfono / WhatsApp (+57 ...):', '+57 ');
-      const gemName = prompt('Gema de interés:', 'Esmeralda Muzo');
-      const priceStr = prompt('Monto cotizado ($ COP):', '15000000');
-      const priceCOP = Number(String(priceStr || '').replace(/\D/g, '')) || 0;
-
-      recordWhatsAppInquiry(client, phone, gemName, priceCOP);
-      logValenEvent('OK', 'ORDER_MANUAL_CREATE', `Pedido manual registrado: ${client} - ${gemName}`, { client, priceCOP });
-      renderAdminOrdersTable();
+      if (typeof window.openManualOrderModal === 'function') {
+        window.openManualOrderModal();
+      }
     });
 
     // J. Configuración de Envíos
@@ -2291,6 +2304,13 @@ document.addEventListener('DOMContentLoaded', () => {
     renderValenLogs();
     updateLogsBadge();
   };
+
+  window.renderAdminOrdersTable = renderAdminOrdersTable;
+  window.renderAdminProductsList = renderAdminProductsList;
+  window.renderAdminCategoryChips = renderAdminCategoryChips;
+  window.renderAdminCategoryPills = renderAdminCategoryPills;
+  window.updateAdminStats = updateAdminStats;
+  window.renderCatalog = renderCatalog;
 
   // Buscador y Ordenador del Catálogo Público
   document.getElementById('search-gems-input')?.addEventListener('input', (e) => {

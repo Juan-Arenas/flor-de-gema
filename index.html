@@ -297,6 +297,143 @@
       }
     };
 
+    // Utilidades globales
+    window.formatCOP = function(value) {
+      var num = Number(value) || 0;
+      return '$ ' + num.toLocaleString('es-CO', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+    };
+
+    window.formatUSD = function(value) {
+      var num = Number(value) || 0;
+      return '$' + num.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+    };
+
+    window.normalizeCategorySlug = function(name) {
+      if (!name) return 'esmeraldas';
+      return String(name)
+        .toLowerCase()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '') || 'esmeraldas';
+    };
+
+    // Toggle Formulario de Agregar / Editar Gema
+    window.toggleAdminProductForm = function(e) {
+      if (e) {
+        try {
+          if (typeof e.preventDefault === 'function') e.preventDefault();
+          if (typeof e.stopPropagation === 'function') e.stopPropagation();
+        } catch (_) {}
+      }
+      var panel = document.getElementById('admin-product-panel');
+      var btn = document.getElementById('admin-product-toggle');
+      if (!panel) return;
+      var isHidden = panel.style.display === 'none' || panel.classList.contains('hidden') || !panel.classList.contains('open');
+      if (isHidden) {
+        panel.classList.add('open');
+        panel.classList.remove('hidden');
+        panel.style.setProperty('display', 'block', 'important');
+        if (btn) btn.innerHTML = '<i class="fas fa-chevron-up"></i> Cerrar Formulario';
+        var nameInput = document.getElementById('admin-product-name');
+        if (nameInput) nameInput.focus();
+      } else {
+        panel.classList.remove('open');
+        panel.classList.add('hidden');
+        panel.style.setProperty('display', 'none', 'important');
+        if (btn) btn.innerHTML = '<i class="fas fa-plus"></i> Abrir Formulario';
+      }
+    };
+
+    window.closeAdminProductForm = function() {
+      var panel = document.getElementById('admin-product-panel');
+      var btn = document.getElementById('admin-product-toggle');
+      if (panel) {
+        panel.classList.remove('open');
+        panel.classList.add('hidden');
+        panel.style.setProperty('display', 'none', 'important');
+      }
+      if (btn) btn.innerHTML = '<i class="fas fa-plus"></i> Abrir Formulario';
+    };
+
+    // Modal de Registro de Pedido / Cotización Manual
+    window.openManualOrderModal = function() {
+      var modal = document.getElementById('modal-manual-order');
+      if (modal) {
+        modal.classList.add('active');
+        modal.classList.add('open');
+        modal.style.setProperty('display', 'flex', 'important');
+        modal.style.setProperty('opacity', '1', 'important');
+        modal.style.setProperty('visibility', 'visible', 'important');
+        modal.style.setProperty('pointer-events', 'auto', 'important');
+        modal.style.setProperty('z-index', '2000005', 'important');
+        document.body.style.overflow = 'hidden';
+        var clientInput = document.getElementById('manual-order-client');
+        if (clientInput) {
+          clientInput.value = '';
+          clientInput.focus();
+        }
+      }
+    };
+
+    window.closeManualOrderModal = function() {
+      var modal = document.getElementById('modal-manual-order');
+      if (modal) {
+        modal.classList.remove('active');
+        modal.classList.remove('open');
+        modal.style.setProperty('display', 'none', 'important');
+        modal.style.setProperty('opacity', '0', 'important');
+        modal.style.setProperty('visibility', 'hidden', 'important');
+        modal.style.setProperty('pointer-events', 'none', 'important');
+        document.body.style.overflow = '';
+      }
+    };
+
+    window.handleManualOrderSubmit = function(e) {
+      if (e && typeof e.preventDefault === 'function') e.preventDefault();
+      var client = (document.getElementById('manual-order-client')?.value || '').trim();
+      var phone = (document.getElementById('manual-order-phone')?.value || '').trim();
+      var gemName = (document.getElementById('manual-order-gem')?.value || '').trim();
+      var priceVal = document.getElementById('manual-order-price')?.value || 0;
+      var priceCOP = Number(String(priceVal).replace(/\D/g, '')) || 0;
+      var status = document.getElementById('manual-order-status')?.value || 'Cotización';
+
+      if (!client || !gemName) {
+        alert('Por favor ingresa al menos el nombre del cliente y la gema.');
+        return false;
+      }
+
+      if (typeof window.recordWhatsAppInquiry === 'function') {
+        window.recordWhatsAppInquiry(client, phone, gemName, priceCOP, status);
+      } else {
+        // Fallback local storage
+        var orders = [];
+        try { orders = JSON.parse(localStorage.getItem('fdg_orders_cache') || '[]'); } catch (_) {}
+        var orderId = 'ORD-' + Date.now().toString().slice(-6);
+        orders.unshift({
+          id: orderId,
+          date: new Date().toISOString(),
+          customerName: client,
+          customerPhone: phone,
+          gemName: gemName,
+          priceCOP: priceCOP,
+          status: status,
+          origin: 'Manual'
+        });
+        localStorage.setItem('fdg_orders_cache', JSON.stringify(orders));
+      }
+
+      if (typeof window.logValenEvent === 'function') {
+        window.logValenEvent('OK', 'ORDER_MANUAL_CREATE', 'Pedido manual registrado: ' + client + ' - ' + gemName, { client: client, priceCOP: priceCOP, status: status });
+      }
+
+      if (typeof window.renderAdminOrdersTable === 'function') {
+        window.renderAdminOrdersTable();
+      }
+
+      window.closeManualOrderModal();
+      return false;
+    };
+
     if (window.location.search.includes('admin=true') || window.location.hash === '#admin') {
       setTimeout(function() { window.openAdminPinModal(); }, 300);
     }
@@ -1036,7 +1173,7 @@
                 <h3 id="admin-form-heading"><i class="fas fa-plus-circle" style="color: #d4af37;"></i> Agregar Piedra Preciosa</h3>
               </div>
               
-              <button type="button" id="admin-product-toggle" class="btn-primary" style="width: 100%; margin-bottom: 12px; background: #111827; color: #fff; padding: 10px; border-radius: 8px; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
+              <button type="button" id="admin-product-toggle" class="btn-primary" onclick="toggleAdminProductForm()" style="width: 100%; margin-bottom: 12px; background: #111827; color: #fff; padding: 10px; border-radius: 8px; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
                 <i class="fas fa-plus"></i> Abrir Formulario
               </button>
 
@@ -1157,7 +1294,7 @@
                     <button class="btn-primary" type="submit" id="admin-product-submit-btn" style="background: #111827; color: #fff; padding: 10px 18px; border-radius: 8px; font-weight: 700; border: none; cursor: pointer;">
                       <i class="fas fa-save"></i> Guardar en Base de Datos
                     </button>
-                    <button class="btn-secondary" type="button" id="admin-product-cancel" style="background: #f1f5f9; color: #334155; padding: 10px 18px; border-radius: 8px; font-weight: 700; border: 1px solid #cbd5e1; cursor: pointer;">
+                    <button class="btn-secondary" type="button" id="admin-product-cancel" onclick="closeAdminProductForm()" style="background: #f1f5f9; color: #334155; padding: 10px 18px; border-radius: 8px; font-weight: 700; border: 1px solid #cbd5e1; cursor: pointer;">
                       <i class="fas fa-times"></i> Cancelar
                     </button>
                   </div>
@@ -1229,7 +1366,7 @@
                 <i class="fas fa-search"></i>
                 <input type="text" id="admin-orders-search" placeholder="Buscar por cliente, gema, teléfono...">
               </div>
-              <button type="button" class="btn-secondary" id="btn-add-order-manual" style="background: #111827; color: #fff; padding: 7px 14px; border-radius: 6px; font-weight: 700; border: none; cursor: pointer;">
+              <button type="button" class="btn-secondary" id="btn-add-order-manual" onclick="openManualOrderModal()" style="background: #111827; color: #fff; padding: 7px 14px; border-radius: 6px; font-weight: 700; border: none; cursor: pointer;">
                 <i class="fas fa-plus"></i> + Registrar Pedido Manual
               </button>
               <button type="button" class="btn-secondary" id="btn-refresh-orders" style="background: #f1f5f9; color: #0f172a; padding: 7px 14px; border-radius: 6px; font-weight: 700; border: 1px solid #cbd5e1; cursor: pointer;">
@@ -1549,6 +1686,56 @@
     </div>
   </div>
 
+  <!-- Modal Registrar Pedido / Cotización Manual -->
+  <div id="modal-manual-order" class="modal modal-overlay" style="display: none;">
+    <div class="modal-content" style="max-width: 480px; width: 100%; background: #ffffff; border-radius: 14px; padding: 24px; box-shadow: 0 25px 60px rgba(0,0,0,0.4); text-align: left; position: relative;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1.5px solid #f1f5f9; padding-bottom: 12px;">
+        <h3 style="margin: 0; font-size: 1.15rem; color: #0f172a; display: flex; align-items: center; gap: 8px; font-weight: 800;">
+          <i class="fas fa-file-invoice-dollar" style="color: #d4af37;"></i> Registrar Pedido Manual
+        </h3>
+        <button type="button" class="modal-close-btn" onclick="closeManualOrderModal()" style="background: none; border: none; font-size: 1.6rem; cursor: pointer; color: #64748b; line-height: 1;">&times;</button>
+      </div>
+
+      <form id="form-manual-order" onsubmit="handleManualOrderSubmit(event)" style="display: flex; flex-direction: column; gap: 12px;">
+        <div class="form-group" style="display: flex; flex-direction: column; gap: 4px;">
+          <label style="font-size: 0.82rem; font-weight: 700; color: #334155;">Nombre del Cliente *</label>
+          <input type="text" id="manual-order-client" placeholder="Ej. Carlos Mendoza" required style="width: 100%; padding: 10px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; box-sizing: border-box;">
+        </div>
+
+        <div class="form-group" style="display: flex; flex-direction: column; gap: 4px;">
+          <label style="font-size: 0.82rem; font-weight: 700; color: #334155;">Teléfono / WhatsApp *</label>
+          <input type="text" id="manual-order-phone" placeholder="Ej. +57 300 123 4567" required style="width: 100%; padding: 10px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; box-sizing: border-box;">
+        </div>
+
+        <div class="form-group" style="display: flex; flex-direction: column; gap: 4px;">
+          <label style="font-size: 0.82rem; font-weight: 700; color: #334155;">Gema de Interés / Referencia *</label>
+          <input type="text" id="manual-order-gem" placeholder="Ej. Esmeralda Muzo 3.45 ct" required style="width: 100%; padding: 10px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; box-sizing: border-box;">
+        </div>
+
+        <div class="form-group" style="display: flex; flex-direction: column; gap: 4px;">
+          <label style="font-size: 0.82rem; font-weight: 700; color: #334155;">Monto Estimado ($ COP) *</label>
+          <input type="number" id="manual-order-price" placeholder="Ej. 18500000" min="0" required style="width: 100%; padding: 10px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; box-sizing: border-box;">
+        </div>
+
+        <div class="form-group" style="display: flex; flex-direction: column; gap: 4px;">
+          <label style="font-size: 0.82rem; font-weight: 700; color: #334155;">Estado Inicial</label>
+          <select id="manual-order-status" style="width: 100%; padding: 10px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; box-sizing: border-box;">
+            <option value="Cotizado">Cotizado</option>
+            <option value="Apartado">Apartado</option>
+            <option value="Vendido">Vendido</option>
+          </select>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
+          <button type="button" onclick="closeManualOrderModal()" style="background: #f1f5f9; color: #475569; padding: 10px 18px; border-radius: 8px; border: 1px solid #cbd5e1; font-weight: 700; cursor: pointer;">Cancelar</button>
+          <button type="submit" style="background: #111827; color: #ffffff; padding: 10px 22px; border-radius: 8px; border: none; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+            <i class="fas fa-check"></i> Guardar Pedido
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Persistent Floating Corner Logo (Always visible in corner as requested) -->
   <a href="javascript:void(0)" onclick="openAdminAuthModal(event)" ontouchend="openAdminAuthModal(event)" class="floating-corner-logo" title="Flor De Gema">
     <img src="logo.webp" alt="Flor De Gema" style="pointer-events: none;">
@@ -1566,7 +1753,7 @@
   </a>
 
   <!-- Scripts -->
-  <script src="js/data.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/data.js?v=2.2"></script>
+  <script src="js/app.js?v=2.2"></script>
 </body>
 </html>

@@ -1,6 +1,27 @@
 // Catálogo Maestro de Gemas y Contenido - Flor De Gema
 // Eslogan: "Flor De Gema, Invierte en belleza eterna"
 
+// Utilidades globales de formato y normalización
+function formatCOP(value) {
+  const num = Number(value) || 0;
+  return '$ ' + num.toLocaleString('es-CO', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+}
+function formatUSD(value) {
+  const num = Number(value) || 0;
+  return '$' + num.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+}
+function normalizeCategorySlug(name) {
+  if (!name) return 'esmeraldas';
+  return String(name)
+    .toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '') || 'esmeraldas';
+}
+window.formatCOP = formatCOP;
+window.formatUSD = formatUSD;
+window.normalizeCategorySlug = normalizeCategorySlug;
+
 const FLOR_DE_GEMA_CONFIG = {
   brand: "Flor De Gema",
   slogan: "Invierte en belleza eterna",

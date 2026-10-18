@@ -3201,4 +3201,50 @@ button {
   text-decoration: underline;
 }
 
+/* ==========================================================================
+   FIX MODAL PEDIDO MANUAL Y FORMULARIO PRODUCTO
+   ========================================================================== */
+#admin-product-panel {
+  display: none;
+}
+#admin-product-panel.open {
+  display: block !important;
+}
+
+#modal-manual-order {
+  display: none;
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background: rgba(15, 23, 42, 0.75) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  z-index: 2000005 !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 16px !important;
+  box-sizing: border-box !important;
+}
+
+#modal-manual-order.active,
+#modal-manual-order.open {
+  display: flex !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+#modal-manual-order .modal-content {
+  background: #ffffff !important;
+  border-radius: 14px !important;
+  padding: 24px !important;
+  max-width: 500px !important;
+  width: 100% !important;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4) !important;
+  position: relative !important;
+  z-index: 2000010 !important;
+}
+
+
 
