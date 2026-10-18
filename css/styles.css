@@ -1439,53 +1439,29 @@ button {
 /* ==========================================================================
    HIDDEN LOCK BUTTON & ADMIN STYLES
    ========================================================================== */
-/* Header Admin Pill Button */
-.header-admin-pill-btn {
+/* Candadito de Acceso Admin (Solo icono, sin texto) */
+.admin-lock-icon-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  color: #64748b;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  background: #1c2e28;
-  color: #ffffff;
-  border: 1px solid #d4af37;
-  padding: 0.38rem 0.85rem;
-  border-radius: 9999px;
-  font-size: 0.8rem;
-  font-weight: 700;
-  cursor: pointer;
+  justify-content: center;
+  border-radius: 50%;
   transition: all 0.2s ease;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
-.header-admin-pill-btn:hover {
-  background: #0f172a;
-  border-color: #f59e0b;
-  transform: translateY(-1px);
+.admin-lock-icon-btn:hover {
+  color: #111827;
+  background: var(--bg-subtle);
+  transform: scale(1.1);
 }
 
-.header-admin-pill-btn svg {
-  color: #d4af37;
-}
-
-/* Footer Admin Button */
-.footer-admin-btn {
-  background: #f8fafc;
-  border: 1px solid var(--border-light);
-  cursor: pointer;
-  padding: 0.35rem 0.75rem;
-  color: #475569;
-  font-size: 0.78rem;
-  font-weight: 700;
-  transition: all 0.2s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  border-radius: 6px;
-}
-
-.footer-admin-btn:hover {
-  background: #1c2e28;
-  color: #ffffff;
-  border-color: #1c2e28;
+.admin-lock-icon-btn svg {
+  width: 17px;
+  height: 17px;
 }
 
 .admin-hidden-lock-btn {
