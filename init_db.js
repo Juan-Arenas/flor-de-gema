@@ -21,11 +21,16 @@ async function init() {
       description TEXT,
       image TEXT NOT NULL,
       status TEXT DEFAULT 'Disponible',
-      featured BOOLEAN DEFAULT FALSE,
+      images JSONB DEFAULT '[]'::jsonb,
+      videos JSONB DEFAULT '[]'::jsonb,
       created_at TIMESTAMPTZ DEFAULT NOW(),
       updated_at TIMESTAMPTZ DEFAULT NOW()
     );
   `);
+
+  await sql.query(`ALTER TABLE flordegema_gemstones ADD COLUMN IF NOT EXISTS images JSONB DEFAULT '[]'::jsonb;`);
+  await sql.query(`ALTER TABLE flordegema_gemstones ADD COLUMN IF NOT EXISTS videos JSONB DEFAULT '[]'::jsonb;`);
+  await sql.query(`ALTER TABLE flordegema_gemstones ADD COLUMN IF NOT EXISTS featured BOOLEAN DEFAULT FALSE;`);
 
   await sql.query(`
     CREATE TABLE IF NOT EXISTS flordegema_logs (

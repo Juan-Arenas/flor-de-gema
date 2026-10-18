@@ -225,6 +225,34 @@
       }
     };
 
+    window.switchAdminTab = function(tabName) {
+      var tabsNav = document.getElementById('admin-tabs-nav');
+      if (tabsNav) {
+        var btns = tabsNav.querySelectorAll('.admin-tab-btn');
+        for (var b = 0; b < btns.length; b++) {
+          btns[b].classList.remove('active');
+          if (btns[b].getAttribute('data-tab') === tabName) {
+            btns[b].classList.add('active');
+          }
+        }
+      }
+      var panes = document.querySelectorAll('.admin-tab-pane');
+      for (var p = 0; p < panes.length; p++) {
+        var pane = panes[p];
+        if (pane.id === 'admin-tab-' + tabName) {
+          pane.classList.add('active');
+          pane.style.setProperty('display', 'flex', 'important');
+        } else {
+          pane.classList.remove('active');
+          pane.style.setProperty('display', 'none', 'important');
+        }
+      }
+
+      if (typeof window.onAdminTabChanged === 'function') {
+        try { window.onAdminTabChanged(tabName); } catch (e) { console.warn(e); }
+      }
+    };
+
     window.openAdminPanel = function() {
       window.closeAdminPinModal();
       var panel = document.getElementById('admin-panel') || document.getElementById('admin-panel-modal');
@@ -239,14 +267,8 @@
         document.body.style.overflow = 'hidden';
       }
 
-      // Asegurar tab por defecto: Catálogo
-      var activePane = document.querySelector('.admin-tab-pane.active');
-      if (!activePane) {
-        var catPane = document.getElementById('admin-tab-catalog');
-        if (catPane) catPane.classList.add('active');
-        var catBtn = document.querySelector('.admin-tab-btn[data-tab="catalog"]');
-        if (catBtn) catBtn.classList.add('active');
-      }
+      // Activar tab Catálogo por defecto
+      window.switchAdminTab('catalog');
 
       try {
         if (typeof window.loadAdminData === 'function') {
@@ -258,7 +280,7 @@
           if (typeof window.updateAdminStats === 'function') window.updateAdminStats();
         }
       } catch (err) {
-        console.warn('Admin data load non-fatal note:', err);
+        console.warn('Admin data load note:', err);
       }
     };
 
@@ -981,17 +1003,26 @@
 
       <!-- Admin Navigation Tabs -->
       <div class="admin-tabs-nav" id="admin-tabs-nav">
-        <button type="button" class="admin-tab-btn active" data-tab="catalog">
+        <button type="button" class="admin-tab-btn active" data-tab="catalog" onclick="switchAdminTab('catalog')">
           <i class="fas fa-boxes-stacked"></i> Catálogo & Inventario
+          <span class="admin-tab-badge" id="tab-stat-catalog">0</span>
         </button>
-        <button type="button" class="admin-tab-btn" data-tab="lives">
+        <button type="button" class="admin-tab-btn" data-tab="orders" onclick="switchAdminTab('orders')">
+          <i class="fas fa-bag-shopping"></i> Pedidos & Cotizaciones
+          <span class="admin-tab-badge" id="tab-stat-orders">0</span>
+        </button>
+        <button type="button" class="admin-tab-btn" data-tab="lives" onclick="switchAdminTab('lives')">
           <i class="fas fa-video"></i> 🎥 Próximos Lives & TikTok
         </button>
-        <button type="button" class="admin-tab-btn" data-tab="categories-cloud">
+        <button type="button" class="admin-tab-btn" data-tab="shipping" onclick="switchAdminTab('shipping')">
+          <i class="fas fa-truck-shield"></i> Envíos Asegurados
+        </button>
+        <button type="button" class="admin-tab-btn" data-tab="categories-cloud" onclick="switchAdminTab('categories-cloud')">
           <i class="fas fa-cloud-arrow-up"></i> Base de Datos & Nube
         </button>
-        <button type="button" class="admin-tab-btn" data-tab="logs">
+        <button type="button" class="admin-tab-btn" data-tab="logs" onclick="switchAdminTab('logs')">
           <i class="fas fa-terminal"></i> Logs Auditoría
+          <span class="admin-tab-badge" id="tab-stat-logs">0</span>
         </button>
       </div>
 
@@ -1052,15 +1083,68 @@
                     <input type="text" id="admin-gem-cert-input" placeholder="Ej. CDTEC Colombia #CDTEC-2026-88492">
                   </div>
 
-                  <div class="form-group">
-                    <label for="admin-product-image">Foto de la Gema (Archivo o Galería)</label>
-                    <input type="file" id="admin-product-image" accept="image/*">
-                    <div style="margin-top: 6px;">
-                      <input type="url" id="admin-product-image-url" placeholder="o pegar URL de imagen: https://...">
+                  <input type="hidden" id="admin-product-image-url" value="">
+
+                  <!-- GESTOR DE MÚLTIPLES FOTOS (SIN LÍMITE) -->
+                  <div class="admin-media-box">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                      <label style="font-size: 0.85rem; font-weight: 800; color: #0f172a; margin: 0; display: flex; align-items: center; gap: 6px;">
+                        <i class="fas fa-camera-retro" style="color: #d4af37;"></i> Fotos de la Gema (Múltiples fotos sin límite) *
+                      </label>
+                      <span id="admin-photos-count-badge" class="admin-tab-badge" style="background:#f1f5f9; color:#0f172a;">0 fotos</span>
                     </div>
-                    <div id="admin-image-preview-wrap" class="admin-image-preview-wrap hidden" style="display: none; margin-top: 8px;">
-                      <img id="admin-image-preview-img" src="" alt="Vista previa">
-                      <span id="admin-image-preview-text" style="font-size: 0.8rem; font-weight: 600;">Imagen seleccionada</span>
+                    <p style="font-size: 0.76rem; color: #64748b; margin: 0 0 10px;">
+                      Puedes agregar todas las fotos que desees (ángulos, microscopio, luz natural, certificados). La primera será la portada.
+                    </p>
+
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px;">
+                      <label class="btn-primary" style="background: #111827; color: #fff; padding: 7px 14px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; margin: 0;">
+                        <i class="fas fa-upload"></i> Subir Fotos del Equipo (una o varias)
+                        <input type="file" id="admin-product-images-file" accept="image/*" multiple style="display: none;">
+                      </label>
+                    </div>
+
+                    <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+                      <input type="url" id="admin-photo-url-input" placeholder="o pegar URL de foto: https://..." style="flex: 1; padding: 7px 10px; font-size: 0.82rem; border: 1px solid #cbd5e1; border-radius: 6px;">
+                      <button type="button" id="admin-btn-add-photo-url" class="btn-secondary" style="background: #f1f5f9; color: #0f172a; padding: 7px 14px; border-radius: 6px; font-size: 0.82rem; font-weight: 700; border: 1px solid #cbd5e1; cursor: pointer;">
+                        + Agregar Foto
+                      </button>
+                    </div>
+
+                    <div id="admin-photos-preview-grid" class="admin-media-preview-grid">
+                      <!-- Rendered by JS -->
+                    </div>
+                  </div>
+
+                  <!-- GESTOR DE MÚLTIPLES VIDEOS (SIN LÍMITE) -->
+                  <div class="admin-media-box">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                      <label style="font-size: 0.85rem; font-weight: 800; color: #0f172a; margin: 0; display: flex; align-items: center; gap: 6px;">
+                        <i class="fas fa-video" style="color: #dc2626;"></i> Videos de la Gema (Múltiples videos sin límite)
+                      </label>
+                      <span id="admin-videos-count-badge" class="admin-tab-badge" style="background:#fef2f2; color:#991b1b;">0 videos</span>
+                    </div>
+                    <p style="font-size: 0.76rem; color: #64748b; margin: 0 0 10px;">
+                      Sube videos locales (.mp4, .webm) o pega enlaces de TikTok/YouTube/directos para que el cliente examine el fuego y refracción.
+                    </p>
+
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px;">
+                      <label class="btn-primary" style="background: #111827; color: #fff; padding: 7px 14px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; margin: 0;">
+                        <i class="fas fa-file-video"></i> Subir Video (.mp4 / .webm)
+                        <input type="file" id="admin-product-videos-file" accept="video/mp4,video/webm,video/*" multiple style="display: none;">
+                      </label>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 8px; margin-bottom: 10px;">
+                      <input type="url" id="admin-video-url-input" placeholder="URL de video (TikTok, YouTube, MP4: https://...)" style="padding: 7px 10px; font-size: 0.82rem; border: 1px solid #cbd5e1; border-radius: 6px;">
+                      <input type="text" id="admin-video-title-input" placeholder="Título (ej: Inspección en pinzas y luz natural)" style="padding: 7px 10px; font-size: 0.82rem; border: 1px solid #cbd5e1; border-radius: 6px;">
+                      <button type="button" id="admin-btn-add-video-url" class="btn-secondary" style="background: #f1f5f9; color: #0f172a; padding: 7px 14px; border-radius: 6px; font-size: 0.82rem; font-weight: 700; border: 1px solid #cbd5e1; cursor: pointer;">
+                        + Agregar Video
+                      </button>
+                    </div>
+
+                    <div id="admin-videos-preview-grid" style="display: flex; flex-direction: column; gap: 8px; min-height: 40px; background: #f8fafc; border: 1.5px dashed #cbd5e1; border-radius: 8px; padding: 8px;">
+                      <!-- Rendered by JS -->
                     </div>
                   </div>
 
@@ -1129,7 +1213,96 @@
           </div>
         </div>
 
-        <!-- TAB 2: PRÓXIMOS LIVES & TIKTOK -->
+        <!-- TAB 2: PEDIDOS & COTIZACIONES WHATSAPP -->
+        <div id="admin-tab-orders" class="admin-tab-pane">
+          <div class="admin-card">
+            <div class="admin-card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+              <div>
+                <h3><i class="fas fa-bag-shopping" style="color: #d4af37;"></i> Historial de Cotizaciones & Pedidos WhatsApp</h3>
+                <p style="font-size: 0.82rem; color: #64748b; margin: 0;">Consultas iniciadas desde el catálogo web, bolsa de guardados o cotizaciones personalizadas.</p>
+              </div>
+              <span id="admin-orders-count-badge" class="admin-stat-pill">0 Pedidos</span>
+            </div>
+
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; align-items: center;">
+              <div class="admin-search-box" style="flex: 1; min-width: 220px;">
+                <i class="fas fa-search"></i>
+                <input type="text" id="admin-orders-search" placeholder="Buscar por cliente, gema, teléfono...">
+              </div>
+              <button type="button" class="btn-secondary" id="btn-add-order-manual" style="background: #111827; color: #fff; padding: 7px 14px; border-radius: 6px; font-weight: 700; border: none; cursor: pointer;">
+                <i class="fas fa-plus"></i> + Registrar Pedido Manual
+              </button>
+              <button type="button" class="btn-secondary" id="btn-refresh-orders" style="background: #f1f5f9; color: #0f172a; padding: 7px 14px; border-radius: 6px; font-weight: 700; border: 1px solid #cbd5e1; cursor: pointer;">
+                <i class="fas fa-rotate"></i> Actualizar
+              </button>
+            </div>
+
+            <div class="admin-table-wrap">
+              <table class="admin-orders-table" id="admin-orders-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Fecha</th>
+                    <th>Cliente</th>
+                    <th>WhatsApp / Tel</th>
+                    <th>Gema(s) de Interés</th>
+                    <th>Monto Estimado</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-orders-table-body">
+                  <!-- Inyectado por JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 3: ENVÍOS & TRANSPORTE ASEGURADO -->
+        <div id="admin-tab-shipping" class="admin-tab-pane">
+          <div class="admin-card" style="max-width: 820px; margin: 0 auto;">
+            <div class="admin-card-header">
+              <h3><i class="fas fa-truck-shield" style="color: #d4af37;"></i> Políticas de Envíos & Transporte Asegurado</h3>
+            </div>
+            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 16px;">
+              Configuración de despacho con transportadoras aliadas (Inter Rapidísimo, Servientrega, Coordinadora, DHL Express) y seguro 100% declarado para piedras preciosas.
+            </p>
+
+            <form id="admin-shipping-form" class="admin-form">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                <div class="form-group">
+                  <label for="admin-shipping-carrier">Transportadora Principal Nacional *</label>
+                  <input type="text" id="admin-shipping-carrier" value="Inter Rapidísimo / Servientrega" required>
+                </div>
+                <div class="form-group">
+                  <label for="admin-shipping-cost">Tarifa Envío Estándar Nacional ($ COP) *</label>
+                  <input type="number" id="admin-shipping-cost" value="25000" min="0" step="1000" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="admin-shipping-free-min">Compra Mínima para Envío 100% Asegurado GRATIS ($ COP) *</label>
+                <input type="number" id="admin-shipping-free-min" value="15000000" min="0" step="500000" required>
+                <small style="color: #64748b; display: block; margin-top: 4px;">En pedidos superiores a este valor, Flor De Gema asume la totalidad del seguro y flete.</small>
+              </div>
+
+              <div class="form-group">
+                <label for="admin-shipping-security-notes">Protocolo de Empaque y Seguridad en Despachos:</label>
+                <textarea id="admin-shipping-security-notes" rows="3">Caja de seguridad sellada con precinto inviolable. Estuche de lujo acolchado para la gema, sobre térmico protector y copia del reporte gemológico de laboratorio (CDTEC / GIA / GRS).</textarea>
+              </div>
+
+              <div class="admin-form-actions">
+                <button type="submit" class="btn-primary" style="background: #111827; color: #fff; padding: 10px 18px; border-radius: 8px; font-weight: 700; border: none; cursor: pointer;">
+                  <i class="fas fa-save"></i> Guardar Políticas de Transporte
+                </button>
+              </div>
+              <p class="admin-message" id="admin-shipping-msg" style="color: #047857; font-size: 0.85rem; margin-top: 8px; font-weight: 700;"></p>
+            </form>
+          </div>
+        </div>
+
+        <!-- TAB 4: PRÓXIMOS LIVES & TIKTOK -->
         <div id="admin-tab-lives" class="admin-tab-pane">
           <!-- 1. Configuración de Próximo Live -->
           <div class="admin-card">

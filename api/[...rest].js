@@ -209,23 +209,27 @@ module.exports = async function handler(req, res) {
       try {
         const {
           name, category, price, weight_ct, dimensions_mm, origin,
-          cut, color, treatment, certificate, description, image, status, featured
+          cut, color, treatment, certificate, description, image, images, videos, status, featured
         } = payload;
 
-        if (!name || !image) {
+        const mainImage = image || (Array.isArray(images) && images[0]) || '';
+        if (!name || !mainImage) {
           return sendJson(res, 400, { error: 'Nombre e imagen son obligatorios' });
         }
 
+        const imagesJson = JSON.stringify(Array.isArray(images) ? images : (mainImage ? [mainImage] : []));
+        const videosJson = JSON.stringify(Array.isArray(videos) ? videos : []);
+
         const inserted = await sql.query(`
           INSERT INTO flordegema_gemstones 
-          (name, category, price, weight_ct, dimensions_mm, origin, cut, color, treatment, certificate, description, image, status, featured, updated_at)
-          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, NOW())
+          (name, category, price, weight_ct, dimensions_mm, origin, cut, color, treatment, certificate, description, image, images, videos, status, featured, updated_at)
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13::jsonb, $14::jsonb, $15, $16, NOW())
           RETURNING *;
         `, [
           name, category || 'Esmeraldas', Number(price) || 0, weight_ct || '',
           dimensions_mm || '', origin || 'Colombia', cut || 'Facetado',
           color || '', treatment || 'Natural', certificate || '', description || '',
-          image, status || 'Disponible', Boolean(featured)
+          mainImage, imagesJson, videosJson, status || 'Disponible', Boolean(featured)
         ]);
 
         await insertAuditLog({
@@ -255,8 +259,11 @@ module.exports = async function handler(req, res) {
       try {
         const {
           name, category, price, weight_ct, dimensions_mm, origin,
-          cut, color, treatment, certificate, description, image, status, featured
+          cut, color, treatment, certificate, description, image, images, videos, status, featured
         } = payload;
+
+        const imagesJson = images !== undefined ? JSON.stringify(Array.isArray(images) ? images : []) : null;
+        const videosJson = videos !== undefined ? JSON.stringify(Array.isArray(videos) ? videos : []) : null;
 
         const updated = await sql.query(`
           UPDATE flordegema_gemstones SET
@@ -272,15 +279,17 @@ module.exports = async function handler(req, res) {
             certificate = COALESCE($10, certificate),
             description = COALESCE($11, description),
             image = COALESCE($12, image),
-            status = COALESCE($13, status),
-            featured = COALESCE($14, featured),
+            images = COALESCE($13::jsonb, images),
+            videos = COALESCE($14::jsonb, videos),
+            status = COALESCE($15, status),
+            featured = COALESCE($16, featured),
             updated_at = NOW()
-          WHERE id = $15
+          WHERE id = $17
           RETURNING *;
         `, [
           name, category, price !== undefined ? Number(price) : null,
           weight_ct, dimensions_mm, origin, cut, color, treatment,
-          certificate, description, image, status,
+          certificate, description, image, imagesJson, videosJson, status,
           featured !== undefined ? Boolean(featured) : null,
           id
         ]);

@@ -1731,9 +1731,388 @@ button {
 }
 
 .admin-tab-pane.active {
-  display: flex;
+  display: flex !important;
   animation: adminTabFade 0.2s ease-in-out;
 }
+
+.admin-tab-btn .admin-tab-badge {
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 9999px;
+  min-width: 18px;
+  text-align: center;
+}
+
+.admin-tab-btn:not(.active) .admin-tab-badge {
+  background: #e2e8f0;
+  color: #334155;
+}
+
+/* ==========================================================================
+   MEDIA MANAGER (MÚLTIPLES FOTOS Y VIDEOS EN ADMIN)
+   ========================================================================== */
+.admin-media-box {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 14px;
+  margin-bottom: 14px;
+}
+
+.admin-media-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(95px, 1fr));
+  gap: 10px;
+  padding: 8px;
+  background: #f8fafc;
+  border: 1.5px dashed #cbd5e1;
+  border-radius: 8px;
+  min-height: 60px;
+}
+
+.admin-photo-card {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 2px solid #e2e8f0;
+  background: #0f172a;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  transition: all 0.15s ease;
+}
+
+.admin-photo-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+}
+
+.admin-photo-card.is-cover {
+  border-color: #d4af37;
+  box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.4);
+}
+
+.admin-photo-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.admin-photo-cover-badge {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  background: #d4af37;
+  color: #000000;
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 1px 5px;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  z-index: 2;
+}
+
+.admin-photo-actions {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  display: flex;
+  gap: 3px;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(4px);
+  padding: 2px 4px;
+  border-radius: 4px;
+  z-index: 2;
+}
+
+.admin-photo-action-btn {
+  background: none;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  padding: 3px;
+  font-size: 0.72rem;
+  transition: transform 0.1s ease;
+}
+
+.admin-photo-action-btn:hover {
+  transform: scale(1.2);
+  color: #f59e0b;
+}
+
+.admin-photo-action-btn.btn-del:hover {
+  color: #ef4444;
+}
+
+/* Videos List / Grid in Admin */
+.admin-video-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 8px 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+
+.admin-video-preview-wrap {
+  width: 90px;
+  height: 56px;
+  background: #0f172a;
+  border-radius: 6px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.admin-video-preview-wrap video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.admin-video-preview-wrap i {
+  color: #ffffff;
+  font-size: 1.2rem;
+}
+
+.admin-video-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.admin-video-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.admin-video-url {
+  font-size: 0.75rem;
+  color: #64748b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ==========================================================================
+   CLIENT PRODUCT DETAIL MODAL MULTI-MEDIA SHOWCASE
+   ========================================================================== */
+.gem-modal-gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.gem-modal-stage {
+  position: relative;
+  width: 100%;
+  height: 380px;
+  max-height: 50vh;
+  background: #090d16;
+  border-radius: 10px;
+  border: 1px solid #1e293b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.gem-modal-stage img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  transition: opacity 0.2s ease;
+}
+
+.gem-modal-stage video {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 6px;
+  outline: none;
+}
+
+.gem-modal-stage iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.gem-stage-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(8px);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 2;
+}
+
+.gem-stage-nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(6px);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 3;
+  transition: all 0.15s ease;
+}
+
+.gem-stage-nav-btn:hover {
+  background: #d4af37;
+  color: #000000;
+  transform: translateY(-50%) scale(1.1);
+}
+
+.gem-stage-prev { left: 12px; }
+.gem-stage-next { right: 12px; }
+
+.gem-modal-thumbnails-strip {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 4px 2px 8px;
+}
+
+.gem-modal-thumb-btn {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 2px solid #e2e8f0;
+  background: #0f172a;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.15s ease;
+}
+
+.gem-modal-thumb-btn:hover {
+  border-color: #cbd5e1;
+  transform: translateY(-2px);
+}
+
+.gem-modal-thumb-btn.active {
+  border-color: #d4af37;
+  box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.5);
+  transform: scale(1.05);
+}
+
+.gem-modal-thumb-btn img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.gem-modal-thumb-video-icon {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 0.9rem;
+}
+
+/* Catalog Card Media Badge */
+.gem-card-media-pill {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(6px);
+  color: #f8fafc;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Orders Table */
+.admin-table-wrap {
+  overflow-x: auto;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.admin-orders-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  text-align: left;
+}
+
+.admin-orders-table th {
+  background: #f8fafc;
+  padding: 10px 14px;
+  color: #475569;
+  font-weight: 700;
+  border-bottom: 2px solid #e2e8f0;
+  white-space: nowrap;
+}
+
+.admin-orders-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #1e293b;
+  vertical-align: middle;
+}
+
+.admin-orders-table tr:hover {
+  background: #f8fafc;
+}
+
+.order-badge {
+  padding: 3px 8px;
+  border-radius: 9999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  white-space: nowrap;
+  display: inline-block;
+}
+
+.order-badge.status-pending { background: #fef3c7; color: #92400e; }
+.order-badge.status-quoted { background: #e0f2fe; color: #0369a1; }
+.order-badge.status-reserved { background: #fce7f3; color: #9d174d; }
+.order-badge.status-sold { background: #dcfce7; color: #15803d; }
 
 @keyframes adminTabFade {
   from { opacity: 0; transform: translateY(4px); }
