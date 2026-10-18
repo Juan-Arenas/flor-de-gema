@@ -25,15 +25,32 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
+  <!-- FontAwesome 6 (Tal cual Ventas Maquillaje) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
   <!-- Clean Stylesheet -->
   <link rel="stylesheet" href="css/styles.css">
 
-  <!-- Instant Modal Bootstrapper -->
+  <!-- Instant Modal Bootstrapper (Tal cual Ventas Maquillaje) -->
   <script>
     var _lastModalOpen = 0;
-    window.openAdminAuthModal = function(e) {
+    var _logoTaps = 0;
+    var _logoTapTimer = null;
+
+    window.handleLogoTap = function(e) {
+      if (e && typeof e.preventDefault === 'function') e.preventDefault();
+      _logoTaps++;
+      clearTimeout(_logoTapTimer);
+      _logoTapTimer = setTimeout(function() { _logoTaps = 0; }, 2500);
+      if (_logoTaps >= 3) {
+        _logoTaps = 0;
+        window.openAdminPinModal(e);
+      }
+    };
+
+    window.openAdminPinModal = function(e) {
       var now = Date.now();
-      if (now - _lastModalOpen < 350) return;
+      if (now - _lastModalOpen < 250) return;
       _lastModalOpen = now;
       if (e) {
         try {
@@ -41,28 +58,38 @@
           if (typeof e.stopPropagation === 'function') e.stopPropagation();
         } catch (_) {}
       }
-      if (sessionStorage.getItem('fdg_admin_token') === '1072' && typeof window.openAdminPanel === 'function') {
+      var currentPin = sessionStorage.getItem('fdg_admin_token') || sessionStorage.getItem('valen_admin_session_pin');
+      if (currentPin === '1072') {
         window.openAdminPanel();
         return;
       }
       var modal = document.getElementById('admin-password-modal');
+      var msg = document.getElementById('admin-login-message') || document.getElementById('admin-auth-error');
+      if (msg) msg.textContent = '';
+      for (var i = 1; i <= 4; i++) {
+        var inp = document.getElementById('admin-pin-input-' + i) || document.getElementById('admin-pin-' + i);
+        if (inp) inp.value = '';
+      }
       if (modal) {
+        modal.classList.add('active');
         modal.classList.add('open');
         modal.style.display = 'flex';
         modal.style.opacity = '1';
         modal.style.visibility = 'visible';
         modal.style.pointerEvents = 'auto';
-        modal.style.zIndex = '99999';
+        modal.style.zIndex = '999999';
         document.body.style.overflow = 'hidden';
         setTimeout(function() {
-          var input = document.getElementById('admin-pin-1');
-          if (input) input.focus();
+          var first = document.getElementById('admin-pin-input-1') || document.getElementById('admin-pin-1');
+          if (first) first.focus();
         }, 120);
       }
     };
-    window.closeAdminAuthModal = function() {
+
+    window.closeAdminPinModal = function() {
       var modal = document.getElementById('admin-password-modal');
       if (modal) {
+        modal.classList.remove('active');
         modal.classList.remove('open');
         modal.style.display = 'none';
         modal.style.opacity = '0';
@@ -71,27 +98,36 @@
         document.body.style.overflow = '';
       }
     };
+
+    window.openAdminAuthModal = window.openAdminPinModal;
+    window.closeAdminAuthModal = window.closeAdminPinModal;
+
     window.openAdminPanel = function() {
-      window.closeAdminAuthModal();
-      var panel = document.getElementById('admin-panel-modal');
+      window.closeAdminPinModal();
+      var panel = document.getElementById('admin-panel') || document.getElementById('admin-panel-modal');
       if (panel) {
+        panel.classList.add('active');
         panel.classList.add('open');
         panel.style.display = 'flex';
         panel.style.opacity = '1';
         panel.style.visibility = 'visible';
         panel.style.pointerEvents = 'auto';
-        panel.style.zIndex = '99999';
+        panel.style.zIndex = '999999';
         document.body.style.overflow = 'hidden';
       }
-      if (typeof window.renderAdminGemsTable === 'function') window.renderAdminGemsTable();
-      if (typeof window.updateAdminStats === 'function') window.updateAdminStats();
-      if (typeof window.renderLogs === 'function') window.renderLogs();
-      if (typeof window.populateAdminLiveForm === 'function') window.populateAdminLiveForm();
-      if (typeof window.renderAdminTikTokTable === 'function') window.renderAdminTikTokTable();
+      if (typeof window.loadAdminData === 'function') window.loadAdminData();
+      else {
+        if (typeof window.renderAdminProductsList === 'function') window.renderAdminProductsList();
+        if (typeof window.renderAdminCategoryChips === 'function') window.renderAdminCategoryChips();
+        if (typeof window.renderAdminCategoryPills === 'function') window.renderAdminCategoryPills();
+        if (typeof window.updateAdminStats === 'function') window.updateAdminStats();
+      }
     };
+
     window.closeAdminPanel = function() {
-      var panel = document.getElementById('admin-panel-modal');
+      var panel = document.getElementById('admin-panel') || document.getElementById('admin-panel-modal');
       if (panel) {
+        panel.classList.remove('active');
         panel.classList.remove('open');
         panel.style.display = 'none';
         panel.style.opacity = '0';
@@ -100,6 +136,10 @@
         document.body.style.overflow = '';
       }
     };
+
+    if (window.location.search.includes('admin=true') || window.location.hash === '#admin') {
+      setTimeout(function() { window.openAdminPinModal(); }, 300);
+    }
   </script>
 </head>
 <body>
@@ -117,8 +157,8 @@
   <!-- Header -->
   <header class="site-header">
     <div class="header-main-row container">
-      <!-- Official Logo in Header Corner & Brand Title -->
-      <a href="#inicio" class="brand-title-area">
+      <!-- Official Logo in Header Corner & Brand Title (Tal cual Ventas Maquillaje: 3 taps abre admin) -->
+      <a href="#inicio" class="brand-title-area" id="site-logo" title="Toca 3 veces para panel de administración" onclick="handleLogoTap(event)" ontouchend="handleLogoTap(event)">
         <img src="logo.webp" alt="Flor De Gema" class="brand-header-logo-img">
         <span class="brand-name-text">FLOR DE GEMA</span>
       </a>
@@ -753,343 +793,228 @@
   </aside>
 
   <!-- =======================================================================
-       MODALES ADMINISTRATIVOS (PIN 1072 & PANEL CRUD + LOGS + NEON DB)
+       PANEL ADMINISTRATIVO TAL CUAL VENTAS MAQUILLAJE (PIN 1072)
        ======================================================================= -->
-  <!-- 1. Modal Autenticación con PIN 1072 -->
-  <div class="modal-overlay" id="admin-password-modal" onclick="if(event.target === this) closeAdminAuthModal()">
-    <div class="modal-clean-card admin-auth-card">
-      <button class="modal-clean-close" id="admin-auth-close-btn" onclick="closeAdminAuthModal()">✕</button>
-      <div class="admin-auth-header">
-        <div class="admin-auth-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-          </svg>
-        </div>
-        <h3>Acceso Administrativo</h3>
-        <p>Ingresa el PIN de 4 dígitos para gestionar el catálogo</p>
+  <!-- Admin Authentication Modal (Tal cual Ventas Maquillaje) -->
+  <div id="admin-password-modal" class="modal modal-overlay">
+    <div class="modal-content admin-auth-card" style="max-width: 420px; text-align: center;">
+      <div class="modal-header" style="justify-content: center; position: relative;">
+        <h3 class="modal-title" style="margin: 0 auto; display: flex; align-items: center; justify-content: center; gap: 8px;">
+          <i class="fas fa-shield-halved" style="color: #d4af37;"></i> Acceso Administrativo
+        </h3>
+        <button type="button" class="modal-close-btn admin-close" onclick="closeAdminPinModal()">&times;</button>
       </div>
+      <p style="color: #64748b; font-size: 0.85rem; margin-bottom: 16px;">Ingresa el PIN de 4 dígitos para gestionar el catálogo y transmisiones.</p>
 
-      <form id="admin-pin-form">
-        <div class="pin-inputs-row">
-          <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-digit" id="admin-pin-1" autocomplete="off" autofocus>
-          <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-digit" id="admin-pin-2" autocomplete="off">
-          <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-digit" id="admin-pin-3" autocomplete="off">
-          <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-digit" id="admin-pin-4" autocomplete="off">
+      <form id="admin-login-form" class="admin-form">
+        <div class="pin-input-group" id="admin-pin-group">
+          <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="1" id="admin-pin-input-1" class="pin-digit" autocomplete="off" autofocus>
+          <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="1" id="admin-pin-input-2" class="pin-digit" autocomplete="off">
+          <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="1" id="admin-pin-input-3" class="pin-digit" autocomplete="off">
+          <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="1" id="admin-pin-input-4" class="pin-digit" autocomplete="off">
         </div>
-        <p class="admin-auth-error" id="admin-auth-error"></p>
-        <button type="submit" class="btn-primary-dark" style="width: 100%; justify-content: center;">
-          Ingresar al Panel
+        <button type="submit" class="btn-primary" style="width: 100%; margin-top: 14px; background: #111827; color: #ffffff; padding: 12px; border-radius: 8px; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
+          <i class="fas fa-lock-open"></i> Acceder al Panel
         </button>
+        <p class="admin-message" id="admin-login-message" style="color: #dc2626; font-size: 0.85rem; margin-top: 8px; font-weight: 700; min-height: 1.2rem;"></p>
       </form>
     </div>
   </div>
 
-  <!-- 2. Modal Panel de Administración Completo -->
-  <div class="admin-fullscreen-modal" id="admin-panel-modal">
-    <div class="admin-panel-content">
-      <!-- Admin Header -->
+  <!-- Admin Management Panel Fullscreen (Tal cual Ventas Maquillaje) -->
+  <div id="admin-panel" class="modal admin-fullscreen-modal">
+    <div class="modal-content admin-panel-content">
       <div class="admin-panel-header">
         <div class="admin-header-title-wrap">
-          <h2>
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M6 3h12l4 6-10 12L2 9l4-6z"></path>
-            </svg>
-            Panel Administrativo · Flor De Gema
-          </h2>
-          <p class="admin-subtitle">Gestión de gemas, medidas, procedencia y logs en tiempo real con Neon PostgreSQL.</p>
+          <h2><i class="fas fa-gem" style="color: #d4af37;"></i> Panel Administrativo · Flor De Gema</h2>
+          <p class="admin-subtitle">Gestión de catálogo de gemas, categorías y transmisiones en tiempo real con Neon PostgreSQL.</p>
         </div>
-
         <div class="admin-header-stats">
           <span class="admin-stat-pill admin-stat-pill-live" id="admin-db-status">
-            <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#16a34a;"></span>
-            Neon Serverless Activo
+            <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#16a34a; margin-right:4px;"></span>
+            Neon Activo
           </span>
-          <span class="admin-stat-pill" id="admin-stat-gems-count">10 Gemas</span>
-          <span class="admin-stat-pill" id="admin-stat-logs-count">0 Logs</span>
-          <button class="modal-clean-close" id="admin-panel-close-btn" onclick="closeAdminPanel()" style="position: static; margin-left: 8px;">✕</button>
+          <span class="admin-stat-pill" id="admin-header-product-stat">0 Gemas</span>
+          <span class="admin-stat-pill" id="admin-header-category-stat">0 Categorías</span>
+          <span class="admin-stat-pill" id="valen-logs-badge-pill"><span id="valen-logs-badge">0</span> Logs</span>
         </div>
+        <button type="button" class="modal-close-btn admin-close" id="admin-panel-close" onclick="closeAdminPanel()" title="Cerrar panel">&times;</button>
       </div>
 
       <!-- Admin Navigation Tabs -->
       <div class="admin-tabs-nav" id="admin-tabs-nav">
         <button type="button" class="admin-tab-btn active" data-tab="catalog">
-          💎 Catálogo de Gemas
+          <i class="fas fa-boxes-stacked"></i> Catálogo & Inventario
         </button>
         <button type="button" class="admin-tab-btn" data-tab="lives">
-          🎥 Próximos Lives & TikTok
+          <i class="fas fa-video"></i> 🎥 Próximos Lives & TikTok
+        </button>
+        <button type="button" class="admin-tab-btn" data-tab="categories-cloud">
+          <i class="fas fa-cloud-arrow-up"></i> Base de Datos & Nube
         </button>
         <button type="button" class="admin-tab-btn" data-tab="logs">
-          📜 Consola de Logs & Errores
-        </button>
-        <button type="button" class="admin-tab-btn" data-tab="neon">
-          ⚡ Base de Datos Neon
+          <i class="fas fa-terminal"></i> Logs Auditoría
         </button>
       </div>
 
-      <!-- Admin Panel Body -->
       <div class="admin-panel-body">
-        <!-- TAB 1: CATÁLOGO DE GEMAS -->
-        <div class="admin-tab-pane active" id="tab-pane-catalog">
-          <!-- Botón Toggle Formulario -->
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem;">
-            <button type="button" id="admin-toggle-form-btn" class="btn-primary-dark" style="background: #1c2e28;">
-              + Agregar Nueva Gema al Catálogo
-            </button>
-            <div style="display: flex; gap: 0.5rem; flex: 1; max-width: 450px;">
-              <input type="text" id="admin-search-gems" placeholder="Buscar gema por nombre, origen, corte..." style="flex: 1; padding: 0.55rem 0.85rem; border: 1px solid var(--border-light); border-radius: 6px; font-size: 0.88rem;">
-              <select id="admin-filter-category" style="padding: 0.55rem 0.85rem; border: 1px solid var(--border-light); border-radius: 6px; font-size: 0.88rem;">
-                <option value="all">Todas</option>
-                <option value="Esmeraldas">Esmeraldas</option>
-                <option value="Zafiros">Zafiros</option>
-                <option value="Rubíes">Rubíes</option>
-                <option value="Turmalinas & Paraíba">Turmalinas</option>
-                <option value="Colección Exclusiva">Colección</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Formulario Agregar / Editar Gema (Colapsable) -->
-          <div class="admin-card-box" id="admin-gem-form-wrap" style="display: none;">
-            <div class="admin-card-title-row">
-              <h3 id="admin-form-heading">Agregar Nueva Piedra Preciosa</h3>
-              <button type="button" id="admin-cancel-edit-btn" class="btn-action-small">Cancelar</button>
-            </div>
-
-            <form id="admin-gem-form">
-              <input type="hidden" id="admin-gem-id" value="">
+        <!-- TAB 1: Catálogo & Inventario -->
+        <div id="admin-tab-catalog" class="admin-tab-pane active">
+          <div class="admin-grid-two">
+            <!-- Add / Edit Gem Card -->
+            <div class="admin-card" id="admin-product-card-form">
+              <div class="admin-card-header">
+                <h3 id="admin-form-heading"><i class="fas fa-plus-circle" style="color: #d4af37;"></i> Agregar Piedra Preciosa</h3>
+              </div>
               
-              <div class="admin-form-grid">
-                <!-- Nombre -->
-                <div class="admin-input-wrap">
-                  <label for="admin-gem-name">Nombre de la Gema *</label>
-                  <input type="text" id="admin-gem-name" required placeholder="Ej: Esmeralda Muzo 3.45 ct">
-                </div>
+              <button type="button" id="admin-product-toggle" class="btn-primary" style="width: 100%; margin-bottom: 12px; background: #111827; color: #fff; padding: 10px; border-radius: 8px; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <i class="fas fa-plus"></i> Abrir Formulario
+              </button>
 
-                <!-- Categoría -->
-                <div class="admin-input-wrap">
-                  <label for="admin-gem-category">Categoría *</label>
-                  <select id="admin-gem-category" required>
-                    <option value="Esmeraldas">Esmeraldas</option>
-                    <option value="Zafiros">Zafiros</option>
-                    <option value="Rubíes">Rubíes</option>
-                    <option value="Turmalinas & Paraíba">Turmalinas & Paraíba</option>
-                    <option value="Colección Exclusiva">Colección Exclusiva</option>
-                    <option value="Topacios">Topacios</option>
-                    <option value="Amatistas">Amatistas</option>
-                    <option value="Diamantes">Diamantes</option>
-                    <option value="Otras">Otras Gemas</option>
-                  </select>
-                </div>
+              <div id="admin-product-panel" class="hidden" style="display: none;">
+                <form id="admin-product-form" class="admin-form">
+                  <input type="hidden" id="admin-product-id" value="">
+                  <div class="form-group">
+                    <label for="admin-product-name">Nombre de la Gema *</label>
+                    <input type="text" id="admin-product-name" placeholder="Ej. Esmeralda Muzo 3.45 ct Verde Gota de Aceite" required>
+                  </div>
 
-                <!-- Precio en COP -->
-                <div class="admin-input-wrap">
-                  <label for="admin-gem-price">Precio ($ COP) *</label>
-                  <input type="number" id="admin-gem-price" required min="0" placeholder="Ej: 18500000">
-                </div>
+                  <div class="form-group">
+                    <label for="admin-product-price">Precio ($ COP) *</label>
+                    <input type="number" id="admin-product-price" min="0" placeholder="Ej. 18500000" required>
+                  </div>
 
-                <!-- Peso en quilates (ct) -->
-                <div class="admin-input-wrap">
-                  <label for="admin-gem-weight">Peso (Quilates / ct) *</label>
-                  <input type="text" id="admin-gem-weight" required placeholder="Ej: 3.45 ct">
-                </div>
+                  <div class="form-group">
+                    <label for="admin-product-category">Categoría</label>
+                    <select id="admin-product-category"></select>
+                  </div>
 
-                <!-- Medidas en mm -->
-                <div class="admin-input-wrap">
-                  <label for="admin-gem-dimensions">Medidas (Milímetros) *</label>
-                  <input type="text" id="admin-gem-dimensions" required placeholder="Ej: 9.82 x 7.64 x 5.90 mm">
-                </div>
+                  <div class="form-group">
+                    <label for="admin-product-category-new">O crea una categoría nueva</label>
+                    <input type="text" id="admin-product-category-new" placeholder="Ej. Turmalinas Paraíba">
+                  </div>
 
-                <!-- Procedencia / Origen -->
-                <div class="admin-input-wrap">
-                  <label for="admin-gem-origin">Procedencia / Origen *</label>
-                  <input type="text" id="admin-gem-origin" required placeholder="Ej: Muzo, Boyacá, Colombia">
-                </div>
+                  <div class="form-group">
+                    <label for="admin-gem-origin-input">Procedencia / Origen</label>
+                    <input type="text" id="admin-gem-origin-input" placeholder="Ej. Muzo, Boyacá, Colombia">
+                  </div>
 
-                <!-- Talla / Corte -->
-                <div class="admin-input-wrap">
-                  <label for="admin-gem-cut">Talla / Corte</label>
-                  <input type="text" id="admin-gem-cut" placeholder="Ej: Talla Esmeralda Octagonal, Cojín...">
-                </div>
+                  <div class="form-group">
+                    <label for="admin-gem-weight-input">Peso (Quilates / ct)</label>
+                    <input type="text" id="admin-gem-weight-input" placeholder="Ej. 3.45 ct">
+                  </div>
 
-                <!-- Color / Tono -->
-                <div class="admin-input-wrap">
-                  <label for="admin-gem-color">Color / Tono</label>
-                  <input type="text" id="admin-gem-color" placeholder="Ej: Verde Muzo Intenso Vívido">
-                </div>
+                  <div class="form-group">
+                    <label for="admin-gem-cut-input">Talla / Corte</label>
+                    <input type="text" id="admin-gem-cut-input" placeholder="Ej. Talla Esmeralda Octagonal">
+                  </div>
 
-                <!-- Tratamiento -->
-                <div class="admin-input-wrap">
-                  <label for="admin-gem-treatment">Tratamiento Declarado</label>
-                  <input type="text" id="admin-gem-treatment" placeholder="Ej: Natural sin tratamiento / Aceite menor">
-                </div>
+                  <div class="form-group">
+                    <label for="admin-gem-cert-input">Certificado / Reporte</label>
+                    <input type="text" id="admin-gem-cert-input" placeholder="Ej. CDTEC Colombia #CDTEC-2026-88492">
+                  </div>
 
-                <!-- Certificado / Reporte -->
-                <div class="admin-input-wrap">
-                  <label for="admin-gem-certificate">Certificado / Reporte Gemológico</label>
-                  <input type="text" id="admin-gem-certificate" placeholder="Ej: CDTEC Colombia #CDTEC-2026-88492">
-                </div>
-
-                <!-- Estado / Disponibilidad -->
-                <div class="admin-input-wrap">
-                  <label for="admin-gem-status">Estado</label>
-                  <select id="admin-gem-status">
-                    <option value="Disponible">Disponible</option>
-                    <option value="Reservada">Reservada</option>
-                    <option value="Vendida">Vendida</option>
-                  </select>
-                </div>
-
-                <!-- Destacada en vitrina -->
-                <div class="admin-input-wrap" style="justify-content: center;">
-                  <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; margin-top: 1.25rem;">
-                    <input type="checkbox" id="admin-gem-featured" style="width: 18px; height: 18px;">
-                    <span>Destacar en vitrina principal</span>
-                  </label>
-                </div>
-
-                <!-- Imagen (Subir archivo o URL) -->
-                <div class="admin-input-wrap admin-grid-full">
-                  <label>Fotografía de la Gema *</label>
-                  <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
-                    <input type="file" id="admin-gem-image-file" accept="image/*" style="font-size: 0.85rem;">
-                    <span style="font-size: 0.82rem; color: var(--text-muted);">o pegar URL:</span>
-                    <input type="url" id="admin-gem-image-url" placeholder="https://ejemplo.com/gema.jpg" style="flex: 1; min-width: 200px;">
-                    <div class="admin-img-preview-box" id="admin-img-preview-box">
-                      <span id="admin-img-placeholder" style="font-size: 0.72rem; color: #94a3b8; text-align: center;">Sin imagen</span>
-                      <img id="admin-gem-preview-img" src="" alt="Vista previa" style="display: none;">
+                  <div class="form-group">
+                    <label for="admin-product-image">Foto de la Gema (Archivo o Galería)</label>
+                    <input type="file" id="admin-product-image" accept="image/*">
+                    <div style="margin-top: 6px;">
+                      <input type="url" id="admin-product-image-url" placeholder="o pegar URL de imagen: https://...">
+                    </div>
+                    <div id="admin-image-preview-wrap" class="admin-image-preview-wrap hidden" style="display: none; margin-top: 8px;">
+                      <img id="admin-image-preview-img" src="" alt="Vista previa">
+                      <span id="admin-image-preview-text" style="font-size: 0.8rem; font-weight: 600;">Imagen seleccionada</span>
                     </div>
                   </div>
-                </div>
 
-                <!-- Descripción Detallada -->
-                <div class="admin-input-wrap admin-grid-full">
-                  <label for="admin-gem-description">Descripción Detallada *</label>
-                  <textarea id="admin-gem-description" rows="3" required placeholder="Escribe las características visuales, fuego interno, rareza o detalles de la piedra..."></textarea>
-                </div>
-              </div>
+                  <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
+                    <input type="checkbox" id="admin-product-active" checked>
+                    <label for="admin-product-active" style="margin: 0; cursor: pointer;">Gema activa (visible en el catálogo)</label>
+                  </div>
 
-              <div style="display: flex; gap: 0.75rem; margin-top: 1.25rem; justify-content: flex-end;">
-                <button type="button" id="admin-gem-clear-btn" class="btn-action-small">Limpiar</button>
-                <button type="submit" id="admin-gem-submit-btn" class="btn-primary-dark">
-                  Guardar Gema en Catálogo y Neon
-                </button>
+                  <div class="admin-form-actions" style="display: flex; gap: 8px; margin-top: 14px;">
+                    <button class="btn-primary" type="submit" id="admin-product-submit-btn" style="background: #111827; color: #fff; padding: 10px 18px; border-radius: 8px; font-weight: 700; border: none; cursor: pointer;">
+                      <i class="fas fa-save"></i> Guardar en Base de Datos
+                    </button>
+                    <button class="btn-secondary" type="button" id="admin-product-cancel" style="background: #f1f5f9; color: #334155; padding: 10px 18px; border-radius: 8px; font-weight: 700; border: 1px solid #cbd5e1; cursor: pointer;">
+                      <i class="fas fa-times"></i> Cancelar
+                    </button>
+                  </div>
+                  <p class="admin-message" id="admin-product-message" style="font-size: 0.85rem; margin-top: 8px; font-weight: 700;"></p>
+                </form>
               </div>
-            </form>
+            </div>
+
+            <!-- Categories Manager -->
+            <div class="admin-card">
+              <div class="admin-card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <h3><i class="fas fa-tags" style="color: #d4af37;"></i> Categorías</h3>
+                <span id="admin-category-count-badge" style="font-size: 0.75rem; font-weight: 800; background: #fef3c7; color: #92400e; padding: 2px 8px; border-radius: 999px; border: 1px solid #fde68a;">0 Categorías</span>
+              </div>
+              <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 10px;">Gestiona las categorías de Flor De Gema. Puedes crear, renombrar o eliminar categorías.</p>
+              <form id="admin-category-form" class="admin-form">
+                <div class="form-group" style="margin-bottom: 10px;">
+                  <label for="admin-new-category">Nueva categoría:</label>
+                  <div style="display: flex; gap: 8px;">
+                    <input type="text" id="admin-new-category" placeholder="Ej. Zafiros Ceilán..." required>
+                    <button class="btn-primary" type="submit" title="Agregar Categoría" style="background: #111827; color: #fff; padding: 8px 14px; border-radius: 8px; border: none; cursor: pointer;"><i class="fas fa-plus"></i></button>
+                  </div>
+                </div>
+              </form>
+
+              <label style="font-size: 0.82rem; font-weight: 700; color: #64748b; display: block; margin-top: 8px;">Categorías actuales (Toca el lápiz para renombrar o el tarro para eliminar):</label>
+              <div id="admin-category-list" class="admin-category-list"></div>
+              <p class="admin-message" id="admin-category-message" style="color: #047857; font-size: 0.82rem; margin-top: 8px; font-weight: 700;"></p>
+            </div>
           </div>
 
-          <!-- Tabla de Gemas -->
-          <div class="admin-table-responsive">
-            <table class="admin-gems-table">
-              <thead>
-                <tr>
-                  <th>Foto</th>
-                  <th>Nombre</th>
-                  <th>Categoría</th>
-                  <th>Precio (COP)</th>
-                  <th>Peso / Medida</th>
-                  <th>Procedencia</th>
-                  <th>Estado</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody id="admin-gems-table-body">
-                <!-- Injected via JavaScript -->
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- TAB 2: CONSOLA DE LOGS & ERRORES -->
-        <div class="admin-tab-pane" id="tab-pane-logs">
-          <div class="admin-card-box" style="margin-bottom: 1rem;">
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+          <!-- Product Inventory List -->
+          <div class="admin-products-section">
+            <div class="admin-products-header-bar">
               <div>
-                <h3 style="font-size: 1.05rem; font-weight: 800; margin: 0 0 0.2rem;">Consola de Auditoría y Registro de Errores</h3>
-                <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0;">Registro cronológico en tiempo real de eventos, cambios y errores del sistema.</p>
+                <h3 style="font-size: 1.05rem; font-weight: 800; color: #111827;"><i class="fas fa-boxes"></i> Inventario de Gemas</h3>
+                <span id="admin-total-products-badge" style="color: #64748b; font-size: 0.8rem; font-weight: 600;">0 gemas</span>
               </div>
-              <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                <button type="button" id="admin-copy-logs-btn" class="btn-action-small">Copiar Logs</button>
-                <button type="button" id="admin-download-logs-btn" class="btn-action-small">Descargar (.txt)</button>
-                <button type="button" id="admin-clear-logs-btn" class="btn-action-small btn-action-danger">Limpiar Logs</button>
-              </div>
-            </div>
-          </div>
 
-          <div class="admin-terminal-wrap">
-            <div class="admin-terminal-header">
-              <span>● ● ● Consola de Logs [Flor De Gema Neon Serverless]</span>
-              <span id="admin-terminal-count">0 entradas</span>
+              <div class="admin-search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="admin-product-search" placeholder="Buscar en inventario...">
+              </div>
             </div>
-            <div class="admin-terminal-body" id="admin-logs-terminal-body">
-              <div class="log-line"><span class="log-badge log-INFO">INFO</span> [Sistema] Consola de logs inicializada correctamente.</div>
+
+            <div class="admin-pills-container" id="admin-category-pills" style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 12px;">
+              <!-- Category pills in admin -->
+            </div>
+
+            <div class="admin-prods-grid" id="admin-product-list">
+              <!-- Populated dynamically by script -->
             </div>
           </div>
         </div>
 
-        <!-- TAB 3: NEON BASE DE DATOS -->
-        <div class="admin-tab-pane" id="tab-pane-neon">
-          <div class="admin-card-box">
-            <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 0.5rem;">Conexión a Base de Datos en Tiempo Real</h3>
-            <p style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 1.25rem;">
-              Flor De Gema está integrada a <strong>Neon PostgreSQL Serverless (AWS us-east-2)</strong>. Todas las gemas, descripciones, medidas y logs se sincronizan automáticamente entre el catálogo en vivo y la base de datos cloud.
-            </p>
-
-            <div style="background: #f8fafc; border: 1px solid var(--border-light); border-radius: 8px; padding: 1.25rem; margin-bottom: 1.5rem;">
-              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem;">
-                <div>
-                  <span style="font-size: 0.78rem; color: #64748b; font-weight: 700; text-transform: uppercase;">Proveedor:</span>
-                  <p style="font-size: 0.95rem; font-weight: 700; color: #0f172a; margin: 0.2rem 0 0;">Neon PostgreSQL Serverless</p>
-                </div>
-                <div>
-                  <span style="font-size: 0.78rem; color: #64748b; font-weight: 700; text-transform: uppercase;">Región:</span>
-                  <p style="font-size: 0.95rem; font-weight: 700; color: #0f172a; margin: 0.2rem 0 0;">AWS us-east-2 (Ohio)</p>
-                </div>
-                <div>
-                  <span style="font-size: 0.78rem; color: #64748b; font-weight: 700; text-transform: uppercase;">Tablas Activas:</span>
-                  <p style="font-size: 0.95rem; font-weight: 700; color: #0f172a; margin: 0.2rem 0 0;">flordegema_gemstones, flordegema_logs</p>
-                </div>
-                <div>
-                  <span style="font-size: 0.78rem; color: #64748b; font-weight: 700; text-transform: uppercase;">Estado:</span>
-                  <p id="neon-connection-status-text" style="font-size: 0.95rem; font-weight: 700; color: #16a34a; margin: 0.2rem 0 0;">🟢 Conectado y Sincronizado</p>
-                </div>
-              </div>
-            </div>
-
-            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
-              <button type="button" id="admin-test-neon-btn" class="btn-primary-dark">
-                Probar Conexión Neon Ahora
-              </button>
-              <button type="button" id="admin-resync-neon-btn" class="btn-action-small" style="padding: 0.65rem 1.25rem;">
-                Sincronizar Todas las Gemas a Neon
-              </button>
-            </div>
-            <p id="admin-neon-feedback" style="font-size: 0.85rem; margin-top: 0.85rem; font-weight: 600;"></p>
-          </div>
-        </div>
-
-        <!-- TAB 4: PRÓXIMOS LIVES & TIKTOK -->
-        <div class="admin-tab-pane" id="tab-pane-lives">
+        <!-- TAB 2: PRÓXIMOS LIVES & TIKTOK -->
+        <div id="admin-tab-lives" class="admin-tab-pane">
           <!-- 1. Configuración de Próximo Live -->
-          <div class="admin-card-box">
-            <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 0.4rem;">Configurar Próxima Transmisión en Vivo (Live)</h3>
-            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <h3><i class="fas fa-broadcast-tower" style="color: #d4af37;"></i> Configurar Próxima Transmisión en Vivo (Live)</h3>
+            </div>
+            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 16px;">
               Actualiza el título, fecha y hora del Live en TikTok e Instagram, y el video que quieres recomendar a tus clientes.
             </p>
 
-            <form id="admin-live-settings-form">
-              <div class="admin-form-grid">
-                <div class="admin-input-wrap">
-                  <label for="admin-input-live-title">Título del Próximo Live *</label>
-                  <input type="text" id="admin-input-live-title" required placeholder="Ej: Gran Transmisión: Lotes Exclusivos de Esmeraldas y Zafiros">
-                </div>
+            <form id="admin-live-settings-form" class="admin-form">
+              <div class="form-group">
+                <label for="admin-input-live-title">Título del Próximo Live *</label>
+                <input type="text" id="admin-input-live-title" required placeholder="Ej: Gran Transmisión: Lotes Exclusivos de Esmeraldas y Zafiros">
+              </div>
 
-                <div class="admin-input-wrap">
+              <div class="checkout-inputs-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <div class="form-group">
                   <label for="admin-input-live-date">Fecha y Hora del Live *</label>
                   <input type="datetime-local" id="admin-input-live-date" required>
                 </div>
 
-                <div class="admin-input-wrap">
+                <div class="form-group">
                   <label for="admin-input-live-platform">Plataforma</label>
                   <select id="admin-input-live-platform">
                     <option value="TikTok & Instagram Live">TikTok & Instagram Live</option>
@@ -1097,78 +1022,83 @@
                     <option value="Instagram Live (@flordegemas)">Instagram Live (@flordegemas)</option>
                   </select>
                 </div>
-
-                <div class="admin-input-wrap">
-                  <label for="admin-input-live-tiktok-url">Enlace al Perfil / Live de TikTok</label>
-                  <input type="url" id="admin-input-live-tiktok-url" value="https://tiktok.com/@flor.de.gema">
-                </div>
-
-                <div class="admin-input-wrap admin-grid-full">
-                  <label for="admin-input-live-desc">Descripción del Live</label>
-                  <textarea id="admin-input-live-desc" rows="2" placeholder="Presentación en directo de nuevas adquisiciones de minas de Muzo y Ceilán. Precios preferenciales y apartados en vivo."></textarea>
-                </div>
-
-                <div class="admin-input-wrap admin-grid-full" style="background: #fef2f2; border: 1px solid #fecaca; padding: 0.85rem; border-radius: 8px;">
-                  <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; color: #991b1b; font-weight: 700;">
-                    <input type="checkbox" id="admin-input-is-live-now" style="width: 20px; height: 20px;">
-                    <span>🔴 MARCAR COMO "EN VIVO AHORA" (Activa alerta roja de transmisión en directo parpadeante en la web)</span>
-                  </label>
-                </div>
-
-                <!-- Video Recomendado -->
-                <div class="admin-input-wrap admin-grid-full" style="border-top: 1px solid var(--border-light); padding-top: 1.25rem; margin-top: 0.5rem;">
-                  <h4 style="font-size: 0.95rem; font-weight: 800; color: #111827; margin: 0 0 0.5rem;">★ Video Recomendado de TikTok (Destacado)</h4>
-                </div>
-
-                <div class="admin-input-wrap">
-                  <label for="admin-input-rec-title">Título del Video Recomendado</label>
-                  <input type="text" id="admin-input-rec-title" placeholder="Ej: ¿Cómo saber si una Esmeralda es 100% natural? Explicación en video">
-                </div>
-
-                <div class="admin-input-wrap">
-                  <label for="admin-input-rec-url">URL del Video en TikTok</label>
-                  <input type="url" id="admin-input-rec-url" placeholder="https://tiktok.com/@flor.de.gema">
-                </div>
-
-                <div class="admin-input-wrap admin-grid-full">
-                  <label for="admin-input-rec-desc">Descripción del Video Recomendado</label>
-                  <textarea id="admin-input-rec-desc" rows="2" placeholder="Aprende a identificar el verde gota de aceite y el jardín característico de las esmeraldas colombianas."></textarea>
-                </div>
               </div>
 
-              <div style="display: flex; justify-content: flex-end; margin-top: 1.25rem;">
-                <button type="submit" class="btn-primary-dark">
-                  Guardar Configuración de Live y Video Recomendado
+              <div class="form-group">
+                <label for="admin-input-live-tiktok-url">Enlace al Perfil / Live de TikTok</label>
+                <input type="url" id="admin-input-live-tiktok-url" value="https://tiktok.com/@flor.de.gema">
+              </div>
+
+              <div class="form-group">
+                <label for="admin-input-live-desc">Descripción del Live</label>
+                <textarea id="admin-input-live-desc" rows="2" placeholder="Presentación en directo de nuevas adquisiciones de minas de Muzo y Ceilán. Precios preferenciales y apartados en vivo."></textarea>
+              </div>
+
+              <div class="form-group" style="background: #fef2f2; border: 1px solid #fecaca; padding: 12px; border-radius: 8px;">
+                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; color: #991b1b; font-weight: 700; margin: 0;">
+                  <input type="checkbox" id="admin-input-is-live-now" style="width: 20px; height: 20px;">
+                  <span>🔴 MARCAR COMO "EN VIVO AHORA" (Activa alerta parpadeante en la cabecera de la web)</span>
+                </label>
+              </div>
+
+              <!-- Video Recomendado -->
+              <div style="border-top: 1px solid #e2e8f0; padding-top: 16px; margin-top: 16px;">
+                <h4 style="font-size: 0.95rem; font-weight: 800; color: #111827; margin: 0 0 10px;"><i class="fas fa-star" style="color: #f59e0b;"></i> Video Recomendado de TikTok (Destacado en Sección Lives)</h4>
+              </div>
+
+              <div class="form-group">
+                <label for="admin-input-rec-title">Título del Video Recomendado</label>
+                <input type="text" id="admin-input-rec-title" placeholder="Ej: ¿Cómo saber si una Esmeralda es 100% natural? Explicación en video">
+              </div>
+
+              <div class="form-group">
+                <label for="admin-input-rec-url">URL del Video en TikTok</label>
+                <input type="url" id="admin-input-rec-url" placeholder="https://tiktok.com/@flor.de.gema">
+              </div>
+
+              <div class="form-group">
+                <label for="admin-input-rec-desc">Descripción del Video Recomendado</label>
+                <textarea id="admin-input-rec-desc" rows="2" placeholder="Aprende a identificar el verde gota de aceite y el jardín característico de las esmeraldas colombianas."></textarea>
+              </div>
+
+              <div class="admin-form-actions">
+                <button type="submit" class="btn-primary" style="background: #111827; color: #fff; padding: 10px 18px; border-radius: 8px; font-weight: 700; border: none; cursor: pointer;">
+                  <i class="fas fa-save"></i> Guardar Configuración de Live y Video Recomendado
                 </button>
               </div>
+              <p class="admin-message" id="admin-live-msg" style="color: #047857; font-size: 0.85rem; margin-top: 8px; font-weight: 700;"></p>
             </form>
           </div>
 
-          <!-- 2. Gestión de Videos Publicados en TikTok -->
-          <div class="admin-card-box">
-            <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 0.4rem;">Agregar Video Publicado a la Galería de TikTok</h3>
-            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">
-              Agrega los videos más vistos o recientes de tu cuenta de TikTok para que los visitantes puedan verlos directamente.
+          <!-- 2. Videos Publicados en TikTok -->
+          <div class="admin-card" style="margin-top: 16px;">
+            <div class="admin-card-header">
+              <h3><i class="fab fa-tiktok" style="color: #111827;"></i> Videos Publicados en TikTok</h3>
+            </div>
+            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 16px;">
+              Agrega los videos más vistos o recientes de tu cuenta de TikTok (@flor.de.gema) para que los visitantes los vean en la sección Próximos Lives.
             </p>
 
-            <form id="admin-new-tiktok-video-form">
-              <div class="admin-form-grid">
-                <div class="admin-input-wrap">
-                  <label for="admin-new-vid-title">Título del Video *</label>
-                  <input type="text" id="admin-new-vid-title" required placeholder="Ej: Mostrando Lote de Zafiros Ceilán Royal Blue sin tratamiento">
-                </div>
+            <form id="admin-new-tiktok-video-form" class="admin-form">
+              <div class="form-group">
+                <label for="admin-new-vid-title">Título del Video *</label>
+                <input type="text" id="admin-new-vid-title" required placeholder="Ej: Mostrando Lote de Zafiros Ceilán Royal Blue sin tratamiento">
+              </div>
 
-                <div class="admin-input-wrap">
+              <div class="checkout-inputs-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <div class="form-group">
                   <label for="admin-new-vid-url">URL del Video en TikTok *</label>
                   <input type="url" id="admin-new-vid-url" required placeholder="https://tiktok.com/@flor.de.gema">
                 </div>
 
-                <div class="admin-input-wrap">
+                <div class="form-group">
                   <label for="admin-new-vid-views">Vistas Estimadas</label>
                   <input type="text" id="admin-new-vid-views" placeholder="Ej: 45.2K vistas">
                 </div>
+              </div>
 
-                <div class="admin-input-wrap">
+              <div class="checkout-inputs-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <div class="form-group">
                   <label for="admin-new-vid-thumb">Miniatura / Imagen</label>
                   <select id="admin-new-vid-thumb">
                     <option value="assets/images/sapphire-gem.jpg">Zafiro Ceilán (Azul)</option>
@@ -1178,37 +1108,129 @@
                   </select>
                 </div>
 
-                <div class="admin-input-wrap admin-grid-full">
+                <div class="form-group">
                   <label for="admin-new-vid-desc">Descripción Breve</label>
-                  <input type="text" id="admin-new-vid-desc" placeholder="Mira el brillo y la refracción del corindón bajo luz natural.">
+                  <input type="text" id="admin-new-vid-desc" placeholder="Detalle macro del corindón o esmeralda.">
                 </div>
               </div>
 
-              <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
-                <button type="submit" class="btn-primary-dark" style="background: #1c2e28;">
-                  + Agregar Video a la Galería
+              <div class="admin-form-actions">
+                <button type="submit" class="btn-primary" style="background: #111827; color: #fff; padding: 10px 18px; border-radius: 8px; font-weight: 700; border: none; cursor: pointer;">
+                  <i class="fas fa-plus"></i> + Agregar Video a la Galería
                 </button>
               </div>
             </form>
 
-            <div style="margin-top: 1.75rem;">
-              <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.75rem;">Videos Actuales en la Web</h4>
-              <div class="admin-table-responsive">
-                <table class="admin-gems-table">
-                  <thead>
-                    <tr>
-                      <th>Miniatura</th>
-                      <th>Título</th>
-                      <th>Vistas</th>
-                      <th>Enlace</th>
-                      <th>Acción</th>
-                    </tr>
-                  </thead>
-                  <tbody id="admin-tiktok-table-body">
-                    <!-- Injected via JavaScript -->
-                  </tbody>
-                </table>
+            <div style="margin-top: 20px;">
+              <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 10px;">Videos Actuales en la Galería</h4>
+              <div id="admin-tiktok-list" class="admin-prods-grid" style="max-height: 360px;">
+                <!-- Populated dynamically -->
               </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 3: BASE DE DATOS NEON & SEGURIDAD -->
+        <div id="admin-tab-categories-cloud" class="admin-tab-pane">
+          <div class="admin-card">
+            <div class="admin-card-header" style="display: flex; justify-content: space-between; align-items: center;">
+              <h3><i class="fas fa-database" style="color: #0284c7;"></i> Neon PostgreSQL Serverless Cloud</h3>
+              <span id="admin-db-status-pill" style="font-size: 0.75rem; font-weight: 800; padding: 4px 10px; border-radius: 999px; background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0;">🟢 Conectado</span>
+            </div>
+            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 16px;">
+              Flor De Gema está integrada con <strong>Neon PostgreSQL Serverless (AWS us-east-2)</strong>. Todas las gemas, descripciones y logs se respaldan en la nube.
+            </p>
+
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 16px;">
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+                <div>
+                  <span style="font-size: 0.75rem; color: #64748b; font-weight: 700; text-transform: uppercase;">Proveedor Cloud:</span>
+                  <p style="font-size: 0.9rem; font-weight: 700; color: #0f172a; margin: 2px 0 0;">Neon PostgreSQL Serverless</p>
+                </div>
+                <div>
+                  <span style="font-size: 0.75rem; color: #64748b; font-weight: 700; text-transform: uppercase;">Región:</span>
+                  <p style="font-size: 0.9rem; font-weight: 700; color: #0f172a; margin: 2px 0 0;">AWS us-east-2 (Ohio)</p>
+                </div>
+                <div>
+                  <span style="font-size: 0.75rem; color: #64748b; font-weight: 700; text-transform: uppercase;">Tablas Activas:</span>
+                  <p style="font-size: 0.9rem; font-weight: 700; color: #0f172a; margin: 2px 0 0;">flordegema_gemstones, flordegema_logs</p>
+                </div>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+              <button type="button" id="admin-test-neon-btn" class="btn-primary" style="background: #0284c7; color: #fff; padding: 10px 18px; border-radius: 8px; font-weight: 700; border: none; cursor: pointer;">
+                <i class="fas fa-network-wired"></i> Probar Conexión Neon
+              </button>
+              <button type="button" id="admin-resync-neon-btn" class="btn-secondary" style="background: #f1f5f9; color: #0f172a; padding: 10px 18px; border-radius: 8px; font-weight: 700; border: 1px solid #cbd5e1; cursor: pointer;">
+                <i class="fas fa-rotate"></i> Sincronizar Todas las Gemas a Neon
+              </button>
+            </div>
+            <p id="admin-neon-feedback" style="font-size: 0.85rem; margin-top: 10px; font-weight: 600;"></p>
+          </div>
+
+          <!-- Cambiar PIN de Seguridad -->
+          <div class="admin-card" style="margin-top: 16px;">
+            <div class="admin-card-header">
+              <h3><i class="fas fa-key" style="color: #d4af37;"></i> Seguridad y Cambio de PIN</h3>
+            </div>
+            <form id="admin-change-password-form" class="admin-form" style="display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap;">
+              <div class="form-group" style="margin-bottom: 0;">
+                <label for="admin-new-password">Nuevo PIN de Acceso (4 dígitos):</label>
+                <input type="password" id="admin-new-password" maxlength="4" placeholder="Ej. 1072" required style="width: 160px; font-size: 1.2rem; letter-spacing: 4px; text-align: center;">
+              </div>
+              <button class="btn-primary" type="submit" style="background: #111827; color: #fff; padding: 10px 18px; border-radius: 8px; font-weight: 700; border: none; cursor: pointer;">
+                <i class="fas fa-shield-alt"></i> Actualizar PIN
+              </button>
+            </form>
+            <p class="admin-message" id="admin-password-message" style="font-size: 0.85rem; margin-top: 8px; font-weight: 700;"></p>
+          </div>
+        </div>
+
+        <!-- TAB 4: LOGS AUDITORÍA (TERMINAL EN VIVO IDÉNTICA A VENTAS MAQUILLAJE) -->
+        <div id="admin-tab-logs" class="admin-tab-pane">
+          <!-- Developer Logs Header Card -->
+          <div class="valen-logs-header-card">
+            <div class="valen-logs-header-info">
+              <div class="valen-logs-title-row">
+                <h3><i class="fas fa-terminal"></i> Terminal de Auditoría en Tiempo Real</h3>
+                <span class="valen-badge-live"><span class="live-blink"></span> LIVE</span>
+              </div>
+              <p class="valen-logs-subtitle">Registro cronológico centralizado de eventos, cambios de gemas, sincronización Neon y accesos.</p>
+            </div>
+            <div class="valen-logs-header-actions">
+              <button type="button" class="btn-sm" id="valen-logs-copy-btn"><i class="fas fa-copy"></i> Copiar Todo</button>
+              <button type="button" class="btn-sm" id="valen-logs-download-btn"><i class="fas fa-download"></i> Descargar Logs</button>
+              <button type="button" class="btn-sm btn-danger-outline" id="valen-logs-clear-btn"><i class="fas fa-trash"></i> Limpiar</button>
+            </div>
+          </div>
+
+          <!-- Controls: Filters & Search -->
+          <div class="valen-logs-controls" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 12px;">
+            <div class="valen-logs-filter-pills" id="valen-logs-filter-group">
+              <button type="button" class="valen-filter-pill active" data-filter="ALL">Todos <span class="pill-count" id="valen-stat-total">0</span></button>
+              <button type="button" class="valen-filter-pill pill-ok" data-filter="OK">Éxito <span class="pill-count" id="valen-stat-ok">0</span></button>
+              <button type="button" class="valen-filter-pill pill-failed" data-filter="FAILED">Fallos <span class="pill-count" id="valen-stat-failed">0</span></button>
+              <button type="button" class="valen-filter-pill" data-filter="NEON">Neon DB</button>
+              <button type="button" class="valen-filter-pill" data-filter="PRODUCT">Gemas</button>
+              <button type="button" class="valen-filter-pill" data-filter="AUTH">Acceso</button>
+            </div>
+
+            <div class="valen-logs-search-wrap">
+              <i class="fas fa-search search-icon"></i>
+              <input type="text" class="valen-logs-search-input" id="valen-logs-search" placeholder="Buscar en terminal de logs...">
+              <button type="button" class="valen-logs-clear-search" id="valen-logs-search-clear">&times;</button>
+            </div>
+          </div>
+
+          <!-- Terminal Body Wrapper -->
+          <div class="valen-terminal-wrapper" style="margin-top: 12px; border-radius: 8px; overflow: hidden; border: 1px solid #334155; background: #0f172a; color: #f8fafc;">
+            <div class="valen-terminal-top-bar" style="background: #1e293b; padding: 8px 14px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155;">
+              <span style="font-family: monospace; font-size: 0.8rem; color: #94a3b8;">● ● ● flordegema@neon:~$ audit.log</span>
+              <span id="valen-terminal-meta" style="font-size: 0.75rem; color: #94a3b8;">0 eventos</span>
+            </div>
+            <div class="valen-terminal-body" id="valen-logs-terminal-body" style="padding: 12px; max-height: 480px; overflow-y: auto; font-family: monospace; font-size: 0.82rem; line-height: 1.5;">
+              <!-- Populated by JS -->
             </div>
           </div>
         </div>
