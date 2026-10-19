@@ -31,6 +31,9 @@ async function init() {
   await sql.query(`ALTER TABLE flordegema_gemstones ADD COLUMN IF NOT EXISTS images JSONB DEFAULT '[]'::jsonb;`);
   await sql.query(`ALTER TABLE flordegema_gemstones ADD COLUMN IF NOT EXISTS videos JSONB DEFAULT '[]'::jsonb;`);
   await sql.query(`ALTER TABLE flordegema_gemstones ADD COLUMN IF NOT EXISTS featured BOOLEAN DEFAULT FALSE;`);
+  await sql.query(`ALTER TABLE flordegema_gemstones ADD COLUMN IF NOT EXISTS clarity TEXT;`);
+  await sql.query(`ALTER TABLE flordegema_gemstones ADD COLUMN IF NOT EXISTS shape TEXT;`);
+  await sql.query(`ALTER TABLE flordegema_gemstones ADD COLUMN IF NOT EXISTS lab TEXT;`);
 
   await sql.query(`
     CREATE TABLE IF NOT EXISTS flordegema_categories (

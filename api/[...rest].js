@@ -19,6 +19,9 @@ function sendJson(res, statusCode, data) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-admin-password');
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
   res.statusCode = statusCode;
   res.end(JSON.stringify(data));
 }
@@ -213,7 +216,8 @@ module.exports = async function handler(req, res) {
       try {
         const {
           name, category, price, weight_ct, dimensions_mm, origin,
-          cut, color, treatment, certificate, description, image, images, videos, status, featured
+          cut, color, treatment, certificate, description, image, images, videos, status, featured,
+          clarity, shape, lab
         } = payload;
 
         const mainImage = image || (Array.isArray(images) && images[0]) || '';
@@ -226,14 +230,15 @@ module.exports = async function handler(req, res) {
 
         const inserted = await sql.query(`
           INSERT INTO flordegema_gemstones 
-          (name, category, price, weight_ct, dimensions_mm, origin, cut, color, treatment, certificate, description, image, images, videos, status, featured, updated_at)
-          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13::jsonb, $14::jsonb, $15, $16, NOW())
+          (name, category, price, weight_ct, dimensions_mm, origin, cut, color, treatment, certificate, description, image, images, videos, status, featured, clarity, shape, lab, updated_at)
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13::jsonb, $14::jsonb, $15, $16, $17, $18, $19, NOW())
           RETURNING *;
         `, [
           name, category || 'Esmeraldas', Number(price) || 0, weight_ct || '',
           dimensions_mm || '', origin || 'Colombia', cut || 'Facetado',
           color || '', treatment || 'Natural', certificate || '', description || '',
-          mainImage, imagesJson, videosJson, status || 'Disponible', Boolean(featured)
+          mainImage, imagesJson, videosJson, status || 'Disponible', Boolean(featured),
+          clarity || '', shape || cut || 'Facetado', lab || certificate || ''
         ]);
 
         await insertAuditLog({
@@ -263,7 +268,8 @@ module.exports = async function handler(req, res) {
       try {
         const {
           name, category, price, weight_ct, dimensions_mm, origin,
-          cut, color, treatment, certificate, description, image, images, videos, status, featured
+          cut, color, treatment, certificate, description, image, images, videos, status, featured,
+          clarity, shape, lab
         } = payload;
 
         const imagesJson = images !== undefined ? JSON.stringify(Array.isArray(images) ? images : []) : null;
@@ -287,14 +293,20 @@ module.exports = async function handler(req, res) {
             videos = COALESCE($14::jsonb, videos),
             status = COALESCE($15, status),
             featured = COALESCE($16, featured),
+            clarity = COALESCE($17, clarity),
+            shape = COALESCE($18, shape),
+            lab = COALESCE($19, lab),
             updated_at = NOW()
-          WHERE id = $17
+          WHERE id = $20
           RETURNING *;
         `, [
           name, category, price !== undefined ? Number(price) : null,
           weight_ct, dimensions_mm, origin, cut, color, treatment,
           certificate, description, image, imagesJson, videosJson, status,
           featured !== undefined ? Boolean(featured) : null,
+          clarity !== undefined ? clarity : null,
+          shape !== undefined ? shape : null,
+          lab !== undefined ? lab : null,
           id
         ]);
 

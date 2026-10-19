@@ -1200,24 +1200,73 @@
                     <input type="text" id="admin-product-category-new" placeholder="Ej. Turmalinas Paraíba">
                   </div>
 
-                  <div class="form-group">
-                    <label for="admin-gem-origin-input">Procedencia / Origen</label>
-                    <input type="text" id="admin-gem-origin-input" placeholder="Ej. Muzo, Boyacá, Colombia">
-                  </div>
+                  <!-- ESPECIFICACIONES TÉCNICAS DE LABORATORIO PERSONALIZABLES -->
+                  <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 14px; margin: 14px 0;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                      <label style="font-size: 0.88rem; font-weight: 800; color: #0f172a; margin: 0; display: flex; align-items: center; gap: 6px;">
+                        <i class="fas fa-microscope" style="color: #047857;"></i> Especificaciones Técnicas de Laboratorio (100% Personalizables)
+                      </label>
+                      <span style="font-size: 0.72rem; font-weight: 700; background: #ecfdf5; color: #047857; padding: 2px 8px; border-radius: 9999px;">
+                        Visible en Ficha Técnica
+                      </span>
+                    </div>
 
-                  <div class="form-group">
-                    <label for="admin-gem-weight-input">Peso (Quilates / ct)</label>
-                    <input type="text" id="admin-gem-weight-input" placeholder="Ej. 3.45 ct">
-                  </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px;">
+                      <div class="form-group" style="margin: 0;">
+                        <label for="admin-gem-weight-input" style="font-size: 0.78rem; font-weight: 700;">Peso (Quilates / ct)</label>
+                        <input type="text" id="admin-gem-weight-input" placeholder="Ej. 2.16 ct">
+                      </div>
 
-                  <div class="form-group">
-                    <label for="admin-gem-cut-input">Talla / Corte</label>
-                    <input type="text" id="admin-gem-cut-input" placeholder="Ej. Talla Esmeralda Octagonal">
-                  </div>
+                      <div class="form-group" style="margin: 0;">
+                        <label for="admin-gem-dimensions-input" style="font-size: 0.78rem; font-weight: 700; color: #047857;">Medidas (ej: 8 × 6 × 4 mm) *</label>
+                        <input type="text" id="admin-gem-dimensions-input" placeholder="Ej. 8 × 6 × 4 mm o 9.2 × 7.1 mm">
+                      </div>
 
-                  <div class="form-group">
-                    <label for="admin-gem-cert-input">Certificado / Reporte</label>
-                    <input type="text" id="admin-gem-cert-input" placeholder="Ej. CDTEC Colombia #CDTEC-2026-88492">
+                      <div class="form-group" style="margin: 0;">
+                        <label for="admin-gem-cut-input" style="font-size: 0.78rem; font-weight: 700;">Talla / Corte</label>
+                        <input type="text" id="admin-gem-cut-input" placeholder="Ej. Redonda, Facetado, Talla Esmeralda">
+                      </div>
+
+                      <div class="form-group" style="margin: 0;">
+                        <label for="admin-gem-shape-input" style="font-size: 0.78rem; font-weight: 700;">Forma</label>
+                        <input type="text" id="admin-gem-shape-input" placeholder="Ej. Redonda, Octagonal, Gota, Cojín">
+                      </div>
+
+                      <div class="form-group" style="margin: 0;">
+                        <label for="admin-gem-color-input" style="font-size: 0.78rem; font-weight: 700; color: #047857;">Color *</label>
+                        <input type="text" id="admin-gem-color-input" placeholder="Ej. Verde Natural Intenso, Royal Blue, Rojo Sangre">
+                      </div>
+
+                      <div class="form-group" style="margin: 0;">
+                        <label for="admin-gem-treatment-input" style="font-size: 0.78rem; font-weight: 700; color: #047857;">Tratamiento *</label>
+                        <input type="text" id="admin-gem-treatment-input" placeholder="Ej. Natural sin tratamiento térmico, Aceitado menor">
+                      </div>
+
+                      <div class="form-group" style="margin: 0;">
+                        <label for="admin-gem-origin-input" style="font-size: 0.78rem; font-weight: 700;">Procedencia / Origen</label>
+                        <input type="text" id="admin-gem-origin-input" placeholder="Ej. Muzo, Boyacá, Colombia">
+                      </div>
+
+                      <div class="form-group" style="margin: 0;">
+                        <label for="admin-gem-clarity-input" style="font-size: 0.78rem; font-weight: 700;">Claridad / Pureza</label>
+                        <input type="text" id="admin-gem-clarity-input" placeholder="Ej. Jardín natural visible, VVS, Transparente">
+                      </div>
+
+                      <div class="form-group" style="margin: 0;">
+                        <label for="admin-gem-cert-input" style="font-size: 0.78rem; font-weight: 700;">Certificado / Reporte #</label>
+                        <input type="text" id="admin-gem-cert-input" placeholder="Ej. CDTEC #12345, ICGMLAB o Sin reporte">
+                      </div>
+
+                      <div class="form-group" style="margin: 0;">
+                        <label for="admin-gem-lab-input" style="font-size: 0.78rem; font-weight: 700;">Laboratorio</label>
+                        <input type="text" id="admin-gem-lab-input" placeholder="Ej. CDTEC Colombia, GIA, Laboratorio Acreditado">
+                      </div>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 10px; margin-bottom: 0;">
+                      <label for="admin-gem-description-input" style="font-size: 0.78rem; font-weight: 700;">Descripción Personalizada de la Gema</label>
+                      <textarea id="admin-gem-description-input" rows="2" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.82rem; font-family: inherit; resize: vertical;" placeholder="Escribe la historia, brillo o detalles únicos de esta gema..."></textarea>
+                    </div>
                   </div>
 
                   <input type="hidden" id="admin-product-image-url" value="">

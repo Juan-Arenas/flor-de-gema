@@ -644,10 +644,12 @@ document.addEventListener('DOMContentLoaded', () => {
             <div><strong>Peso:</strong> ${gem.carats || 'N/A'} ct</div>
             <div><strong>Medidas:</strong> ${gem.dimensions || 'N/A'}</div>
             <div><strong>Talla / Corte:</strong> ${gem.cut || gem.shape || 'Facetado'}</div>
-            <div><strong>Color:</strong> ${gem.color || 'Verde Natural'}</div>
+            <div><strong>Forma:</strong> ${gem.shape || gem.cut || 'Natural'}</div>
+            <div><strong>Color:</strong> ${gem.color || 'Color Natural'}</div>
+            <div><strong>Claridad:</strong> ${gem.clarity || 'Seleccionada'}</div>
             <div><strong>Procedencia:</strong> ${gem.origin || 'Colombia'}</div>
             <div><strong>Tratamiento:</strong> ${gem.treatment || 'Natural'}</div>
-            <div style="grid-column: 1 / -1;"><strong>Certificado:</strong> ${gem.reportNumber || 'Reporte Gemológico Oficial'} (${gem.lab || 'Laboratorio Acreditado'})</div>
+            <div style="grid-column: 1 / -1;"><strong>Certificado:</strong> ${gem.reportNumber || 'Reporte Gemológico Oficial'} ${gem.lab ? `(${gem.lab})` : ''}</div>
           </div>
 
           <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
@@ -757,14 +759,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('filter-pills-container');
     if (!container) return;
 
-    const categories = (typeof GEM_CATEGORIES !== 'undefined') ? GEM_CATEGORIES : [
+    const baseCategories = [
       { id: "all", name: "Todas las Gemas" },
       { id: "esmeraldas", name: "Esmeraldas" },
       { id: "zafiros", name: "Zafiros" },
       { id: "rubies", name: "Rubíes" },
+      { id: "diamantes", name: "Diamantes" },
       { id: "turmalinas", name: "Turmalinas & Paraíba" },
       { id: "coleccion", name: "Colección Exclusiva" }
     ];
+
+    const catMap = new Map();
+    baseCategories.forEach(c => catMap.set(c.id, c.name));
+
+    if (Array.isArray(gemsList)) {
+      gemsList.forEach(g => {
+        const slug = normalizeCategorySlug(g.category || g.displayCategory);
+        const displayName = g.displayCategory || (slug.charAt(0).toUpperCase() + slug.slice(1));
+        if (slug && !catMap.has(slug)) {
+          catMap.set(slug, displayName);
+        }
+      });
+    }
+
+    const categories = Array.from(catMap.entries()).map(([id, name]) => ({ id, name }));
 
     container.innerHTML = categories.map(cat => `
       <button class="pill-clean ${cat.id === currentCategory ? 'active' : ''}" onclick="filterByCategory('${cat.id}')">
@@ -1468,6 +1486,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const heading = document.getElementById('admin-form-heading');
     if (heading) heading.innerHTML = '<i class="fas fa-plus-circle" style="color: #d4af37;"></i> Agregar Piedra Preciosa';
 
+    const safeSetVal = (id, val) => {
+      const el = document.getElementById(id);
+      if (el) el.value = val;
+    };
+    safeSetVal('admin-gem-dimensions-input', '');
+    safeSetVal('admin-gem-shape-input', '');
+    safeSetVal('admin-gem-color-input', '');
+    safeSetVal('admin-gem-treatment-input', '');
+    safeSetVal('admin-gem-clarity-input', '');
+    safeSetVal('admin-gem-cert-input', '');
+    safeSetVal('admin-gem-lab-input', '');
+    safeSetVal('admin-gem-description-input', '');
+
     currentGemPhotos = [];
     currentGemVideos = [];
     renderGemPhotosGallery();
@@ -1499,7 +1530,14 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('admin-gem-origin-input').value = gem.origin || '';
     document.getElementById('admin-gem-weight-input').value = gem.carats || '';
     document.getElementById('admin-gem-cut-input').value = gem.cut || '';
+    document.getElementById('admin-gem-dimensions-input').value = gem.dimensions || '';
+    document.getElementById('admin-gem-shape-input').value = gem.shape || '';
+    document.getElementById('admin-gem-color-input').value = gem.color || '';
+    document.getElementById('admin-gem-treatment-input').value = gem.treatment || '';
+    document.getElementById('admin-gem-clarity-input').value = gem.clarity || '';
     document.getElementById('admin-gem-cert-input').value = gem.reportNumber || '';
+    document.getElementById('admin-gem-lab-input').value = gem.lab || '';
+    document.getElementById('admin-gem-description-input').value = gem.description || '';
     document.getElementById('admin-product-image-url').value = gem.image || '';
 
     const activeCheckbox = document.getElementById('admin-product-active');
@@ -1689,7 +1727,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const origin = document.getElementById('admin-gem-origin-input').value.trim() || 'Colombia';
     const weight = document.getElementById('admin-gem-weight-input').value.trim() || '2.0 ct';
     const cut = document.getElementById('admin-gem-cut-input').value.trim() || 'Talla Esmeralda';
-    const cert = document.getElementById('admin-gem-cert-input').value.trim() || 'CDTEC Colombia';
+    const dimensions = document.getElementById('admin-gem-dimensions-input')?.value.trim() || 'A convenir';
+    const shape = document.getElementById('admin-gem-shape-input')?.value.trim() || cut.split(' ')[0] || 'Facetado';
+    const color = document.getElementById('admin-gem-color-input')?.value.trim() || 'Color Natural';
+    const treatment = document.getElementById('admin-gem-treatment-input')?.value.trim() || 'Natural sin tratamiento térmico';
+    const clarity = document.getElementById('admin-gem-clarity-input')?.value.trim() || 'Seleccionada';
+    const cert = document.getElementById('admin-gem-cert-input')?.value.trim() || '';
+    const lab = document.getElementById('admin-gem-lab-input')?.value.trim() || (cert || 'Laboratorio Acreditado');
+    const description = document.getElementById('admin-gem-description-input')?.value.trim() || `Piedra preciosa natural seleccionada con la máxima exigencia gemológica. "Flor De Gema, Invierte en belleza eterna".`;
     const active = document.getElementById('admin-product-active').checked;
 
     if (!name) {
@@ -1739,15 +1784,15 @@ document.addEventListener('DOMContentLoaded', () => {
       priceCOP: price,
       priceUSD: Math.round(price / 4000),
       carats: weight.replace(/[^0-9.]/g, '') || weight,
-      dimensions: '8 x 6 x 4 mm',
-      shape: cut.split(' ')[0] || 'Octagonal',
+      dimensions,
+      shape,
       cut,
-      color: 'Color Puro de Alto Fuego',
-      clarity: 'Pureza seleccionada',
-      treatment: 'Natural sin tratamiento térmico',
+      color,
+      clarity,
+      treatment,
       origin,
-      reportNumber: cert,
-      lab: cert,
+      reportNumber: cert || 'Reporte Gemológico Oficial',
+      lab: lab || 'Laboratorio Acreditado',
       image: mainCover,
       images: [...compressedPhotos],
       videos: [...currentGemVideos],
@@ -1755,12 +1800,12 @@ document.addEventListener('DOMContentLoaded', () => {
       status: active ? 'Disponible' : 'Oculto',
       active,
       badge: origin.split(',')[0].trim(),
-      description: `Piedra preciosa natural seleccionada por su belleza y color único. "Flor De Gema, Invierte en belleza eterna".`
+      description
     };
 
     const isEdit = Boolean(idInput);
     const existingGem = isEdit ? gemsList.find(g => g.id === idInput || String(g.rawId) === idInput) : null;
-    const rawId = existingGem ? (existingGem.rawId || String(existingGem.id).replace(/\D/g, '')) : null;
+    const rawId = existingGem ? (existingGem.rawId || String(existingGem.id).replace(/\D/g, '')) : (isEdit ? String(idInput).replace(/\D/g, '') : null);
 
     const endpoint = (isEdit && rawId) ? `/api/gemstones/${rawId}` : '/api/gemstones';
     const method = (isEdit && rawId) ? 'PUT' : 'POST';
@@ -1778,9 +1823,18 @@ document.addEventListener('DOMContentLoaded', () => {
           price,
           weight_ct: payload.carats,
           dimensions_mm: payload.dimensions,
+          shape: payload.shape,
+          cut: payload.cut,
+          color: payload.color,
+          clarity: payload.clarity,
+          treatment: payload.treatment,
+          origin: payload.origin,
           certificate: payload.reportNumber,
+          lab: payload.lab,
+          description: payload.description,
           image: mainCover,
           images: compressedPhotos,
+          videos: currentGemVideos,
           adminPassword: currentAdminPin
         })
       });
@@ -1815,7 +1869,7 @@ document.addEventListener('DOMContentLoaded', () => {
       };
 
       if (isEdit) {
-        const idx = gemsList.findIndex(g => g.id === idInput || String(g.rawId) === idInput);
+        const idx = gemsList.findIndex(g => g.id === idInput || String(g.rawId) === idInput || (rawId && String(g.rawId) === String(rawId)));
         if (idx > -1) {
           gemsList[idx] = finalGem;
         } else {
@@ -1828,6 +1882,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       localStorage.setItem('fdg_gemstones_cache', JSON.stringify(gemsList));
+      initCategories();
       renderAdminProductsList();
       renderAdminCategoryChips();
       renderAdminCategoryPills();
@@ -1843,7 +1898,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const toggleBtn = document.getElementById('admin-product-toggle');
       if (toggleBtn) toggleBtn.innerHTML = '<i class="fas fa-plus"></i> Abrir Formulario';
 
-      alert(`¡Piedra preciosa publicada exitosamente en la nube!\nAhora todos los clientes y visitantes pueden verla en vivo.`);
+      alert(`¡Piedra preciosa guardada y publicada exitosamente en la nube!\nAhora todos los clientes y visitantes pueden verla en vivo con sus especificaciones exactas.`);
     } catch (err) {
       alert(`⚠️ Error de conexión al guardar en la nube:\n${err.message}`);
     } finally {
@@ -2066,10 +2121,13 @@ document.addEventListener('DOMContentLoaded', () => {
             price: gem.priceCOP || gem.price || 0,
             weight_ct: gem.carats || '',
             dimensions_mm: gem.dimensions || '',
+            shape: gem.shape || gem.cut || 'Facetado',
             origin: gem.origin || 'Colombia',
             cut: gem.cut || 'Facetado',
             color: gem.color || 'Verde Natural',
             treatment: gem.treatment || 'Natural',
+            clarity: gem.clarity || 'Seleccionada',
+            lab: gem.lab || gem.reportNumber || 'Laboratorio Acreditado',
             certificate: gem.reportNumber || gem.certificate || '',
             description: gem.description || '',
             image: mainImg,
@@ -2129,7 +2187,7 @@ document.addEventListener('DOMContentLoaded', () => {
       } catch (_) {}
 
       // 2. Sincronizar catálogo de gemas
-      const res = await fetch('/api/gemstones');
+      const res = await fetch('/api/gemstones?_t=' + Date.now(), { cache: 'no-store' });
       if (res.ok) {
         const rows = await res.json();
         if (Array.isArray(rows)) {
@@ -2147,6 +2205,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             gemsList = [];
             localStorage.setItem('fdg_gemstones_cache', JSON.stringify([]));
+            initCategories();
             renderCatalog();
             renderAdminProductsList();
             renderAdminCategoryChips();
@@ -2165,26 +2224,27 @@ document.addEventListener('DOMContentLoaded', () => {
               rawId: r.id,
               name: r.name,
               category: r.category || 'esmeraldas',
-              displayCategory: r.category || 'Esmeraldas',
+              displayCategory: r.category ? (r.category.charAt(0).toUpperCase() + r.category.slice(1)) : 'Esmeraldas',
               priceCOP: Number(r.price) || 0,
               priceUSD: Math.round((Number(r.price) || 0) / 4000),
               carats: r.weight_ct || '2.0',
-              dimensions: r.dimensions_mm || '8 x 6 mm',
-              shape: r.cut || 'Octagonal',
+              dimensions: r.dimensions_mm || 'Consultar',
+              shape: r.shape || r.cut || 'Facetado',
               cut: r.cut || 'Talla Esmeralda',
               color: r.color || 'Verde Natural',
               treatment: r.treatment || 'Natural',
+              clarity: r.clarity || 'Seleccionada',
               origin: r.origin || 'Colombia',
-              reportNumber: r.certificate || 'CDTEC',
-              lab: r.certificate || 'CDTEC Colombia',
+              reportNumber: r.certificate || 'Reporte Gemológico Oficial',
+              lab: r.lab || r.certificate || 'Laboratorio Acreditado',
               image: r.image || images[0] || 'assets/images/emerald-gem.jpg',
               images,
               videos,
               featured: Boolean(r.featured),
               status: r.status || 'Disponible',
               active: r.status !== 'Oculto',
-              badge: (r.origin || 'Muzo').split(',')[0].trim(),
-              description: r.description || `Piedra preciosa natural. "Flor De Gema, Invierte en belleza eterna".`
+              badge: (r.origin || 'Colombia').split(',')[0].trim(),
+              description: r.description || `Piedra preciosa natural seleccionada con la máxima exigencia gemológica. "Flor De Gema, Invierte en belleza eterna".`
             };
           });
 
@@ -2217,10 +2277,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     price: localG.priceCOP || localG.price || 0,
                     weight_ct: localG.carats || '',
                     dimensions_mm: localG.dimensions || '',
+                    shape: localG.shape || localG.cut || 'Facetado',
                     origin: localG.origin || 'Colombia',
                     cut: localG.cut || 'Facetado',
                     color: localG.color || 'Verde Natural',
                     treatment: localG.treatment || 'Natural',
+                    clarity: localG.clarity || 'Seleccionada',
+                    lab: localG.lab || localG.reportNumber || 'Laboratorio Acreditado',
                     certificate: localG.reportNumber || localG.certificate || '',
                     description: localG.description || '',
                     image: mainImg,
@@ -2247,6 +2310,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
           gemsList = serverGems;
           localStorage.setItem('fdg_gemstones_cache', JSON.stringify(gemsList));
+          initCategories();
           renderCatalog();
           renderAdminProductsList();
           renderAdminCategoryChips();
