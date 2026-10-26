@@ -2387,66 +2387,6 @@ document.addEventListener('DOMContentLoaded', () => {
             };
           });
 
-          // Si localmente hay gemas que no están en el servidor, subirlas para no perderlas
-          const serverRawIds = new Set(rows.map(r => String(r.id)));
-          const unsynced = gemsList.filter(g => !g.rawId || !serverRawIds.has(String(g.rawId)));
-          if (unsynced.length > 0) {
-            for (const localG of unsynced) {
-              try {
-                const compressed = [];
-                const photos = Array.isArray(localG.images) ? localG.images : (localG.image ? [localG.image] : []);
-                for (const p of photos) {
-                  if (typeof p === 'string' && p.startsWith('data:image/')) {
-                    compressed.push(await compressDataUrl(p, 1200, 1200, 0.8));
-                  } else {
-                    compressed.push(p);
-                  }
-                }
-                const mainImg = compressed[0] || localG.image || 'assets/images/emerald-gem.jpg';
-                const postRes = await fetch('/api/gemstones', {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json',
-                    'x-admin-password': currentAdminPin,
-                    'Authorization': `Bearer ${currentAdminPin}`
-                  },
-                  body: JSON.stringify({
-                    name: localG.name,
-                    category: localG.displayCategory || localG.category || 'Esmeraldas',
-                    price: localG.priceCOP || localG.price || 0,
-                    weight_ct: localG.carats || '',
-                    dimensions_mm: localG.dimensions || '',
-                    shape: localG.shape || localG.cut || 'Facetado',
-                    origin: localG.origin || 'Colombia',
-                    cut: localG.cut || 'Facetado',
-                    color: localG.color || 'Verde Natural',
-                    treatment: localG.treatment || 'Natural',
-                    clarity: localG.clarity || 'Seleccionada',
-                    lab: localG.lab || localG.reportNumber || 'Laboratorio Acreditado',
-                    certificate: localG.reportNumber || localG.certificate || '',
-                    description: localG.description || '',
-                    image: mainImg,
-                    images: compressed.length > 0 ? compressed : [mainImg],
-                    videos: Array.isArray(localG.videos) ? localG.videos : [],
-                    status: localG.status || 'Disponible',
-                    featured: Boolean(localG.featured),
-                    adminPassword: currentAdminPin
-                  })
-                });
-                if (postRes.ok) {
-                  const saved = await postRes.json();
-                  serverGems.unshift({
-                    ...localG,
-                    id: `FDG-${saved.id}`,
-                    rawId: saved.id,
-                    image: saved.image || mainImg,
-                    images: Array.isArray(saved.images) ? saved.images : compressed
-                  });
-                }
-              } catch (_) {}
-            }
-          }
-
           gemsList = serverGems;
           localStorage.setItem('fdg_gemstones_cache', JSON.stringify(gemsList));
           initCategories();
@@ -2938,4 +2878,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Sincronización en segundo plano con Neon
   syncWithNeonDatabase();
+
+  // Realtime Polling Neon DB cada 3.5 segundos para sincronizar en todos los dispositivos
+  setInterval(() => {
+    syncWithNeonDatabase().catch(() => {});
+  }, 3500);
 });
