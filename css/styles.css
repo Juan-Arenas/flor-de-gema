@@ -3246,5 +3246,82 @@ button {
   z-index: 2000010 !important;
 }
 
+/* ==========================================================================
+   ESTILOS GEMA VENDIDA / SOLD OUT (EXACTO REFERENCIA IMAGEN 2)
+   ========================================================================== */
+.gem-badge-soldout {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(15, 23, 42, 0.90);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  color: #ffffff;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  padding: 4px 10px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  z-index: 5;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  text-transform: uppercase;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  pointer-events: none;
+}
+
+.gem-badge-soldout i {
+  font-size: 0.72rem;
+  color: #cbd5e1;
+}
+
+.btn-card-soldout {
+  background: #94a3b8 !important;
+  color: #ffffff !important;
+  font-size: 0.82rem !important;
+  font-weight: 800 !important;
+  padding: 0.6rem 0.8rem !important;
+  border-radius: var(--radius-sm, 6px) !important;
+  border: none !important;
+  cursor: not-allowed !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 5px !important;
+  width: 100% !important;
+  opacity: 0.95;
+  letter-spacing: 0.02em;
+  user-select: none;
+  box-shadow: none !important;
+}
+
+.gem-card-clean.is-sold .gem-image-stage img {
+  filter: contrast(95%);
+  opacity: 0.92;
+}
+
+.gem-card-clean.is-sold .gem-price-cop {
+  color: #64748b;
+}
+
+.admin-action-btn.admin-action-sold {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+}
+
+.admin-action-btn.admin-action-sold:hover {
+  background: #e2e8f0;
+}
+
+.admin-action-btn.admin-action-sold.is-sold {
+  background: #0f172a;
+  color: #f8fafc;
+  border: 1px solid #0f172a;
+}
+
+
 
 

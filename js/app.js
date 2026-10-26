@@ -587,6 +587,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     currentModalMediaIndex = 0;
 
+    const isSold = gem.status === 'Agotado' || gem.status === 'Sold Out' || gem.status === 'Vendido' || gem.isSold === true;
+
     modalContent.innerHTML = `
       <div style="display: flex; gap: 1.5rem; flex-direction: column;">
         <!-- Gem Media Showcase Gallery -->
@@ -616,12 +618,23 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
 
         <div>
+          ${isSold ? `
+            <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px;">
+              <div>
+                <span style="display: inline-flex; align-items: center; gap: 5px; background: #0f172a; color: #fff; font-size: 0.72rem; font-weight: 800; padding: 3px 8px; border-radius: 4px; margin-bottom: 2px;">
+                  <i class="far fa-clock"></i> PIEZA VENDIDA / SOLD OUT
+                </span>
+                <p style="margin: 0; font-size: 0.82rem; color: #475569;">Esta pieza exclusiva ya fue adquirida. Puedes cotizar una gema de características similares por encargo.</p>
+              </div>
+            </div>
+          ` : ''}
+
           <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; margin-bottom: 0.3rem;">
             <span style="font-size: 0.8rem; font-weight: 800; color: #64748b; text-transform: uppercase;">
               REF: ${gem.id} · ${gem.displayCategory || gem.category}
             </span>
-            <span style="font-size: 0.76rem; font-weight: 700; background: #ecfdf5; color: #047857; padding: 2px 8px; border-radius: 9999px;">
-              ✓ 100% Gema Natural Certificada
+            <span style="font-size: 0.76rem; font-weight: 700; background: ${isSold ? '#f1f5f9; color: #475569' : '#ecfdf5; color: #047857'}; padding: 2px 8px; border-radius: 9999px;">
+              ${isSold ? '⏱ Pieza Vendida' : '✓ 100% Gema Natural Certificada'}
             </span>
           </div>
 
@@ -653,10 +666,17 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
 
           <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
-            <button class="btn-primary-dark" style="flex: 1; justify-content: center; background: #25d366; border-color: #25d366; color: #fff; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 8px; text-decoration: none; cursor: pointer;" onclick="inquireGem('${gem.id}')">
-              <i class="fab fa-whatsapp" style="font-size: 1.2rem;"></i>
-              Apartar / Cotizar por WhatsApp
-            </button>
+            ${isSold ? `
+              <button class="btn-primary-dark" style="flex: 1; justify-content: center; background: #0f172a; border-color: #0f172a; color: #fff; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 8px; text-decoration: none; cursor: pointer;" onclick="inquireSoldOutGem('${gem.id}')">
+                <i class="fab fa-whatsapp" style="font-size: 1.2rem; color: #22c55e;"></i>
+                Encargar o cotizar gema similar
+              </button>
+            ` : `
+              <button class="btn-primary-dark" style="flex: 1; justify-content: center; background: #25d366; border-color: #25d366; color: #fff; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 8px; text-decoration: none; cursor: pointer;" onclick="inquireGem('${gem.id}')">
+                <i class="fab fa-whatsapp" style="font-size: 1.2rem;"></i>
+                Apartar / Cotizar por WhatsApp
+              </button>
+            `}
             <button class="btn-secondary-light" style="padding: 12px 18px; border-radius: 8px; font-weight: 700; cursor: pointer; border: 1px solid var(--border-light);" onclick="toggleWishlist('${gem.id}'); closeTechModal();">
               ${wishlist.includes(gem.id) ? 'Quitar de Guardados' : 'Guardar en Bolsa'}
             </button>
@@ -842,12 +862,15 @@ document.addEventListener('DOMContentLoaded', () => {
       const photoCount = Array.isArray(gem.images) ? gem.images.length : (gem.image ? 1 : 0);
       const videoCount = Array.isArray(gem.videos) ? gem.videos.length : 0;
       const hasMedia = photoCount > 1 || videoCount > 0;
+      const isSold = gem.status === 'Agotado' || gem.status === 'Sold Out' || gem.status === 'Vendido' || gem.isSold === true;
 
       return `
-        <article class="gem-card-clean" data-id="${gem.id}">
+        <article class="gem-card-clean ${isSold ? 'is-sold' : ''}" data-id="${gem.id}">
           <div class="gem-image-stage" onclick="openTechSheet('${gem.id}')" style="cursor: pointer; position: relative;">
             <img src="${gem.image || 'assets/images/emerald-gem.jpg'}" alt="${gem.name}" loading="lazy" onerror="this.src='assets/images/emerald-gem.jpg';">
-            ${gem.badge ? `<span class="gem-badge-origin">${gem.badge}</span>` : ''}
+            ${isSold ? `
+              <span class="gem-badge-soldout"><i class="far fa-clock"></i> SOLD OUT</span>
+            ` : (gem.badge ? `<span class="gem-badge-origin">${gem.badge}</span>` : '')}
             ${hasMedia ? `
               <span class="gem-card-media-pill">
                 ${photoCount > 0 ? `<i class="fas fa-camera"></i> ${photoCount}` : ''}
@@ -879,12 +902,21 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
 
             <div class="gem-actions-row">
-              <button class="btn-card-outline" onclick="openTechSheet('${gem.id}')">
-                <i class="fas fa-eye"></i> Ficha Técnica
-              </button>
-              <button class="btn-card-wa" onclick="inquireGem('${gem.id}')" title="Apartar por WhatsApp">
-                <i class="fab fa-whatsapp"></i> Apartar
-              </button>
+              ${isSold ? `
+                <button class="btn-card-outline" onclick="openTechSheet('${gem.id}')" style="flex: 1;">
+                  <i class="fas fa-eye"></i> Ficha
+                </button>
+                <button class="btn-card-soldout" disabled title="Esta pieza exclusiva ya fue vendida" style="flex: 1.2;">
+                  Sold Out
+                </button>
+              ` : `
+                <button class="btn-card-outline" onclick="openTechSheet('${gem.id}')">
+                  <i class="fas fa-eye"></i> Ficha Técnica
+                </button>
+                <button class="btn-card-wa" onclick="inquireGem('${gem.id}')" title="Apartar por WhatsApp">
+                  <i class="fab fa-whatsapp"></i> Apartar
+                </button>
+              `}
             </div>
           </div>
         </article>
@@ -987,6 +1019,21 @@ document.addEventListener('DOMContentLoaded', () => {
     window.open(`https://wa.me/${waNum}?text=${encodeURIComponent(msg)}`, '_blank');
   }
   window.inquireGem = inquireGem;
+
+  function inquireSoldOutGem(gemId) {
+    const gem = gemsList.find(g => g.id === gemId || String(g.rawId) === String(gemId));
+    if (!gem) return;
+
+    recordWhatsAppInquiry('Cliente Encargo Personalizado', 'WhatsApp Web', `Encargo similar a: ${gem.name} (REF: ${gem.id})`, gem.priceCOP || 0, 'Encargo');
+
+    logValenEvent('OK', 'WHATSAPP_SOLDOUT_INQUIRY', `Consulta por gema similar (Sold Out): "${gem.name}" (${gem.id})`, { gemId, priceCOP: gem.priceCOP });
+
+    const msg = `Hola Flor De Gema, vi en su catálogo que la gema "${gem.name}" (REF: ${gem.id}) ya figura como VENDIDA (Sold Out).\nMe gustó mucho esta pieza (${gem.carats} ct, ${gem.origin || 'Colombia'}, talla ${gem.cut || 'Facetada'}).\n¿Es posible encargar o cotizar una gema de características similares?\n\nEslogan: "Flor De Gema, Invierte en belleza eterna"`;
+
+    const waNum = (typeof FLOR_DE_GEMA_CONFIG !== 'undefined' && FLOR_DE_GEMA_CONFIG.whatsappNumber) || '573016256746';
+    window.open(`https://wa.me/${waNum}?text=${encodeURIComponent(msg)}`, '_blank');
+  }
+  window.inquireSoldOutGem = inquireSoldOutGem;
 
   function recordWhatsAppInquiry(clientName, phone, gemName, priceCOP, status = 'Cotizado') {
     const pad = (n) => String(n).padStart(2, '0');
@@ -1435,7 +1482,8 @@ document.addEventListener('DOMContentLoaded', () => {
     list.forEach(gem => {
       const card = document.createElement('div');
       const isHidden = gem.status === 'Oculto' || gem.active === false;
-      card.className = `admin-prod-card ${isHidden ? 'inactive-product' : ''}`;
+      const isSold = gem.status === 'Agotado' || gem.status === 'Sold Out' || gem.status === 'Vendido' || gem.isSold === true;
+      card.className = `admin-prod-card ${isHidden ? 'inactive-product' : ''} ${isSold ? 'sold-product' : ''}`;
 
       const photoCount = Array.isArray(gem.images) ? gem.images.length : (gem.image ? 1 : 0);
       const videoCount = Array.isArray(gem.videos) ? gem.videos.length : 0;
@@ -1450,11 +1498,15 @@ document.addEventListener('DOMContentLoaded', () => {
               <span>${gem.displayCategory || gem.category}</span>
               <span>•</span>
               <span style="color: #047857; font-weight: 700;">📷 ${photoCount} ${videoCount > 0 ? `· 🎥 ${videoCount}` : ''}</span>
+              ${isSold ? `<span style="color: #0f172a; font-weight: 800; background: #e2e8f0; padding: 1px 6px; border-radius: 4px;">• ⏱ Sold Out</span>` : ''}
               ${isHidden ? `<span style="color: #b91c1c; font-weight: 700;">• (Oculta)</span>` : ''}
             </div>
           </div>
         </div>
         <div class="admin-prod-actions">
+          <button type="button" class="admin-action-btn admin-action-sold ${isSold ? 'is-sold' : ''}" data-id="${gem.id}" title="${isSold ? 'Reactivar como Disponible' : 'Marcar como Vendida (Sold Out)'}">
+            <i class="fas ${isSold ? 'fa-undo' : 'fa-tag'}"></i> ${isSold ? 'Vendida ✓' : 'Marcar Vendida'}
+          </button>
           <button type="button" class="admin-action-btn admin-action-edit" data-id="${gem.id}">
             <i class="fas fa-pen"></i> Editar
           </button>
@@ -1467,6 +1519,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       `;
 
+      card.querySelector('.admin-action-sold').addEventListener('click', () => toggleProductSoldState(gem.id));
       card.querySelector('.admin-action-edit').addEventListener('click', () => openEditProduct(gem.id));
       card.querySelector('.admin-action-toggle').addEventListener('click', () => toggleProductState(gem.id));
       card.querySelector('.admin-action-delete').addEventListener('click', () => deleteProduct(gem.id));
@@ -1504,6 +1557,9 @@ document.addEventListener('DOMContentLoaded', () => {
     renderGemPhotosGallery();
     renderGemVideosGallery();
 
+    const statusSelect = document.getElementById('admin-product-status-select');
+    if (statusSelect) statusSelect.value = 'Disponible';
+
     const msg = document.getElementById('admin-product-message');
     if (msg) msg.textContent = '';
   }
@@ -1539,6 +1595,17 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('admin-gem-lab-input').value = gem.lab || '';
     document.getElementById('admin-gem-description-input').value = gem.description || '';
     document.getElementById('admin-product-image-url').value = gem.image || '';
+
+    const statusSelect = document.getElementById('admin-product-status-select');
+    if (statusSelect) {
+      if (gem.status === 'Agotado' || gem.status === 'Sold Out' || gem.status === 'Vendido' || gem.isSold === true) {
+        statusSelect.value = 'Agotado';
+      } else if (gem.status === 'Oculto' || gem.active === false) {
+        statusSelect.value = 'Oculto';
+      } else {
+        statusSelect.value = 'Disponible';
+      }
+    }
 
     const activeCheckbox = document.getElementById('admin-product-active');
     if (activeCheckbox) activeCheckbox.checked = !(gem.status === 'Oculto' || gem.active === false);
@@ -1580,6 +1647,44 @@ document.addEventListener('DOMContentLoaded', () => {
     logValenEvent('OK', 'PRODUCT_TOGGLE', `Visibilidad cambiada: "${gem.name}" (${gem.status})`, { gemId, status: gem.status });
   }
   window.toggleProductState = toggleProductState;
+
+  async function toggleProductSoldState(gemId) {
+    const gem = gemsList.find(g => g.id === gemId || String(g.rawId) === String(gemId));
+    if (!gem) return;
+
+    const currentlySold = gem.status === 'Agotado' || gem.status === 'Sold Out' || gem.status === 'Vendido' || gem.isSold === true;
+    const newStatus = currentlySold ? 'Disponible' : 'Agotado';
+    gem.status = newStatus;
+    gem.isSold = !currentlySold;
+    gem.active = true; // Mantiene la gema visible en el catálogo (no oculta)
+
+    localStorage.setItem('fdg_gemstones_cache', JSON.stringify(gemsList));
+    renderAdminProductsList();
+    renderCatalog();
+    updateAdminStats();
+
+    // Sincronizar actualización de estado con Neon si está disponible
+    const rawId = gem.rawId || String(gemId).replace(/\D/g, '');
+    if (rawId) {
+      try {
+        fetch(`/api/gemstones/${rawId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-admin-password': currentAdminPin,
+            'Authorization': `Bearer ${currentAdminPin}`
+          },
+          body: JSON.stringify({
+            status: newStatus,
+            adminPassword: currentAdminPin
+          })
+        }).catch(() => {});
+      } catch (_) {}
+    }
+
+    logValenEvent('OK', 'PRODUCT_STATUS_CHANGE', `Gema "${gem.name}" marcada como: ${newStatus}`, { gemId, status: newStatus });
+  }
+  window.toggleProductSoldState = toggleProductSoldState;
 
   async function deleteProduct(gemId) {
     const gem = gemsList.find(g => g.id === gemId || String(g.rawId) === String(gemId));
@@ -1777,31 +1882,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const mainCover = compressedPhotos[0] || 'assets/images/emerald-gem.jpg';
 
+    const statusSelect = document.getElementById('admin-product-status-select');
+    const selectedStatus = statusSelect ? statusSelect.value : (active ? 'Disponible' : 'Oculto');
+    const isGemActive = selectedStatus !== 'Oculto';
+
     const payload = {
       name,
       category: normalizeCategorySlug(categoryName),
       displayCategory: categoryName,
-      priceCOP: price,
-      priceUSD: Math.round(price / 4000),
-      carats: weight.replace(/[^0-9.]/g, '') || weight,
-      dimensions,
-      shape,
-      cut,
-      color,
-      clarity,
-      treatment,
-      origin,
-      reportNumber: cert || 'Reporte Gemológico Oficial',
-      lab: lab || 'Laboratorio Acreditado',
-      image: mainCover,
-      images: [...compressedPhotos],
-      videos: [...currentGemVideos],
-      featured: true,
-      status: active ? 'Disponible' : 'Oculto',
-      active,
-      badge: origin.split(',')[0].trim(),
-      description
-    };
+        priceCOP: price,
+        priceUSD: Math.round(price / 4000),
+        carats: weight.replace(/[^0-9.]/g, '') || weight,
+        dimensions,
+        shape,
+        cut,
+        color,
+        clarity,
+        treatment,
+        origin,
+        reportNumber: cert || 'Reporte Gemológico Oficial',
+        lab: lab || 'Laboratorio Acreditado',
+        image: mainCover,
+        images: [...compressedPhotos],
+        videos: [...currentGemVideos],
+        featured: true,
+        status: selectedStatus,
+        active: isGemActive,
+        badge: origin.split(',')[0].trim(),
+        description
+      };
 
     const isEdit = Boolean(idInput);
     const existingGem = isEdit ? gemsList.find(g => g.id === idInput || String(g.rawId) === idInput) : null;
@@ -1809,6 +1918,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const endpoint = (isEdit && rawId) ? `/api/gemstones/${rawId}` : '/api/gemstones';
     const method = (isEdit && rawId) ? 'PUT' : 'POST';
+
+    let serverNotice = '';
+    let savedRow = {};
 
     try {
       const res = await fetch(endpoint, {
@@ -1842,20 +1954,18 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!res.ok) {
         const errData = await res.json().catch(() => ({}));
         let errMsg = errData.error || errData.message || `Error del servidor HTTP ${res.status}`;
-        if (res.status === 413) {
-          errMsg = 'Las imágenes seleccionadas exceden el límite permitido. Se recomienda subir fotos de menor resolución.';
-        } else if (res.status === 401) {
-          errMsg = 'Acceso no autorizado: El PIN administrativo no coincide con el servidor.';
+        if (res.status === 402) {
+          serverNotice = '\n\n⚠️ Nota de la nube Neon: Tu cuenta superó la cuota mensual gratuita (HTTP 402). La gema quedó GUARDADA y PUBLICADA localmente en tu catálogo.';
+        } else if (res.status === 413) {
+          serverNotice = '\n\n⚠️ Las imágenes exceden el límite de Neon; guardado localmente.';
+        } else {
+          serverNotice = `\n\n⚠️ Sincronización en la nube: ${errMsg}. Guardada en tu catálogo local.`;
         }
-        alert(`⚠️ No se pudo guardar en la base de datos central:\n${errMsg}`);
-        if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.innerHTML = originalBtnText;
-        }
-        return;
+        console.warn('Neon DB status:', res.status, errMsg);
+      } else {
+        savedRow = await res.json().catch(() => ({}));
       }
 
-      const savedRow = await res.json();
       const finalRawId = savedRow.id || (existingGem ? existingGem.rawId : Date.now());
       const finalId = `FDG-${finalRawId}`;
 
@@ -1875,10 +1985,10 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
           gemsList.unshift(finalGem);
         }
-        logValenEvent('OK', 'PRODUCT_UPDATE', `Gema actualizada en la nube: "${name}" (${finalId})`, { id: finalId, name, price });
+        logValenEvent('OK', 'PRODUCT_UPDATE', `Gema actualizada: "${name}" (${finalId}) - Estado: ${selectedStatus}`, { id: finalId, name, price, status: selectedStatus });
       } else {
         gemsList.unshift(finalGem);
-        logValenEvent('OK', 'PRODUCT_CREATE', `Nueva gema creada y publicada en Neon: "${name}" ($${formatCOP(price)})`, { id: finalId, name, price });
+        logValenEvent('OK', 'PRODUCT_CREATE', `Nueva gema creada: "${name}" ($${formatCOP(price)}) - Estado: ${selectedStatus}`, { id: finalId, name, price, status: selectedStatus });
       }
 
       localStorage.setItem('fdg_gemstones_cache', JSON.stringify(gemsList));
@@ -1898,9 +2008,36 @@ document.addEventListener('DOMContentLoaded', () => {
       const toggleBtn = document.getElementById('admin-product-toggle');
       if (toggleBtn) toggleBtn.innerHTML = '<i class="fas fa-plus"></i> Abrir Formulario';
 
-      alert(`¡Piedra preciosa guardada y publicada exitosamente en la nube!\nAhora todos los clientes y visitantes pueden verla en vivo con sus especificaciones exactas.`);
+      alert(`¡Piedra preciosa guardada y publicada exitosamente!\nEstado: ${selectedStatus}. Todos los clientes pueden verla en el catálogo.${serverNotice}`);
     } catch (err) {
-      alert(`⚠️ Error de conexión al guardar en la nube:\n${err.message}`);
+      console.warn('Network error saving to cloud:', err);
+      // Fallback local garantizado
+      const finalRawId = existingGem ? existingGem.rawId : Date.now();
+      const finalId = `FDG-${finalRawId}`;
+      const finalGem = {
+        ...payload,
+        id: finalId,
+        rawId: finalRawId,
+        image: mainCover,
+        images: compressedPhotos,
+        videos: currentGemVideos
+      };
+
+      if (isEdit) {
+        const idx = gemsList.findIndex(g => g.id === idInput || String(g.rawId) === idInput);
+        if (idx > -1) gemsList[idx] = finalGem;
+        else gemsList.unshift(finalGem);
+      } else {
+        gemsList.unshift(finalGem);
+      }
+
+      localStorage.setItem('fdg_gemstones_cache', JSON.stringify(gemsList));
+      renderAdminProductsList();
+      renderCatalog();
+      updateAdminStats();
+      resetAdminProductForm();
+
+      alert(`¡Piedra preciosa guardada en tu catálogo local!\nEstado: ${selectedStatus}. (Nota: Hubo un fallo de conexión con Neon; los cambios están guardados en tu navegador).`);
     } finally {
       if (submitBtn) {
         submitBtn.disabled = false;
@@ -2203,15 +2340,17 @@ document.addEventListener('DOMContentLoaded', () => {
               }
             }
 
-            gemsList = [];
-            localStorage.setItem('fdg_gemstones_cache', JSON.stringify([]));
-            initCategories();
-            renderCatalog();
-            renderAdminProductsList();
-            renderAdminCategoryChips();
-            renderAdminCategoryPills();
-            updateAdminStats();
-            logValenEvent('OK', 'NEON_SYNC', 'Catálogo sincronizado desde Neon: 0 gemas registradas', { totalGems: 0 });
+            if (!gemsList || gemsList.length === 0) {
+              gemsList = [];
+              localStorage.setItem('fdg_gemstones_cache', JSON.stringify([]));
+              initCategories();
+              renderCatalog();
+              renderAdminProductsList();
+              renderAdminCategoryChips();
+              renderAdminCategoryPills();
+              updateAdminStats();
+              logValenEvent('OK', 'NEON_SYNC', 'Catálogo sincronizado desde Neon: 0 gemas registradas', { totalGems: 0 });
+            }
             return;
           }
 

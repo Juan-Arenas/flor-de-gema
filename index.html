@@ -1334,9 +1334,20 @@
                     </div>
                   </div>
 
-                  <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
+                  <div class="form-group" style="margin-bottom: 12px;">
+                    <label for="admin-product-status-select" style="font-weight: 700; color: #1e293b; display: block; margin-bottom: 6px; font-size: 0.88rem;">
+                      <i class="fas fa-tag" style="color: #d4af37;"></i> Estado de la Gema:
+                    </label>
+                    <select id="admin-product-status-select" style="width: 100%; padding: 9px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-weight: 700; font-size: 0.88rem; background: #ffffff; color: #0f172a; cursor: pointer;">
+                      <option value="Disponible">🟢 Disponible para Apartar</option>
+                      <option value="Agotado">⏱ Vendida / Sold Out (Visible en catálogo con badge Sold Out)</option>
+                      <option value="Oculto">👁️ Oculta (Borrador privado, no visible al público)</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group" style="display: none; align-items: center; gap: 8px;">
                     <input type="checkbox" id="admin-product-active" checked>
-                    <label for="admin-product-active" style="margin: 0; cursor: pointer;">Gema activa (visible en el catálogo)</label>
+                    <label for="admin-product-active" style="margin: 0; cursor: pointer;">Gema activa</label>
                   </div>
 
                   <div class="admin-form-actions" style="display: flex; gap: 8px; margin-top: 14px;">
